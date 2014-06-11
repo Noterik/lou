@@ -34,7 +34,7 @@ import org.springfield.lou.maggie.MaggieLoader;
  * Main lou class
  *
  * @author Daniel Ockeloen
- * @copyright Copyright: Noterik B.V. 2013
+ * @copyright Copyright: Noterik B.V. 2013 or 2014
  * @package org.springfield.lou
  *
  */
