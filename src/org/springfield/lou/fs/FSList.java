@@ -40,6 +40,7 @@ public class FSList {
 	private String path;
 	private String id;
 	private List<FsNode> nodes;
+	private Map<String, List<FsNode>> QueryCache = new HashMap<String, List<FsNode>>(); 
 	private Map<String, String> properties = new HashMap<String, String>();
 	
 
@@ -106,7 +107,11 @@ public class FSList {
 	}
 	
 	public List<FsNode> getNodesFiltered(String searchkey) {
-		List<FsNode> result = new ArrayList<FsNode>();
+		List<FsNode> result = QueryCache.get(searchkey);
+		if (result!=null) return result;
+		
+		// result was not in cache !
+		result = new ArrayList<FsNode>();
 		List<String> searchkeys = smartSplit(searchkey);
 		
 		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
@@ -115,6 +120,7 @@ public class FSList {
 				result.add(n);
 			}
 		}
+		QueryCache.put(searchkey, result);
 		return result;
 	}
 	
@@ -153,7 +159,10 @@ public class FSList {
 	}
 	
 	public List<FsNode> getNodesFilteredAndSorted(String searchkey,String sortkey,String direction) {
-		List<FSSortNode> result = new ArrayList<FSSortNode>();
+		List<FsNode> cresult = QueryCache.get(searchkey+sortkey+direction);
+		if (cresult!=null) return cresult;
+		
+		ArrayList<FSSortNode> result = new ArrayList<FSSortNode>();
 		List<String> searchkeys = smartSplit(searchkey);
 		
 		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
@@ -172,10 +181,14 @@ public class FSList {
 			FSSortNode n = (FSSortNode)iter.next();	
 			endresult.add(n.node);
 		}
+		QueryCache.put(searchkey+sortkey+direction, endresult);
 		return endresult;
 	}
 	
 	public List<FsNode> getNodesSorted(String sortkey,String direction) {
+		List<FsNode> cresult = QueryCache.get(sortkey+direction);
+		if (cresult!=null) return cresult;
+		
 		List<FSSortNode> result = new ArrayList<FSSortNode>();
 		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
 			FsNode n = (FsNode)iter.next();	
@@ -190,6 +203,7 @@ public class FSList {
 			FSSortNode n = (FSSortNode)iter.next();	
 			endresult.add(n.node);
 		}
+		QueryCache.put(sortkey+direction, endresult);
 		return endresult;
 	}
 
