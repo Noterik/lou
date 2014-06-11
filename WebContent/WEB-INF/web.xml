@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>Lou service</display-name>
+	
+	<servlet>
+		<description>
+			Default description
+		</description>
+		<display-name>
+			Default Restlet
+		</display-name>
+		<servlet-name>ServerServlet</servlet-name>
+		<servlet-class>com.noelios.restlet.ext.servlet.ServerServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<context-param>
+		<param-name>org.restlet.application</param-name>
+		<param-value>org.springfield.lou.restlet.LouApplication</param-value>
+	</context-param>
+	
+	<servlet-mapping>
+		<servlet-name>ServerServlet</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+	    <servlet-name>MargeServlet</servlet-name>
+	    <servlet-class>com.noterik.bart.marge.server.MargeServlet</servlet-class>
+	    <load-on-startup>1</load-on-startup>
+	</servlet>   
+	<servlet-mapping>
+	    <servlet-name>MargeServlet</servlet-name>
+	    <url-pattern>/marge/*</url-pattern>
+	</servlet-mapping> 
+	
+	<servlet>
+	    <servlet-name>LouServlet</servlet-name>
+	    <servlet-class>org.springfield.lou.servlet.LouServlet</servlet-class>
+	    <load-on-startup>1</load-on-startup>
+	</servlet>   
+	<servlet-mapping>
+	    <servlet-name>LouServlet</servlet-name>
+	    <url-pattern>/*</url-pattern>
+	</servlet-mapping> 
+</web-app>
