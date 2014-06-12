@@ -29,11 +29,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import noterik.fsxml.strainer.FSXMLStrainer;
-
 import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.components.ComponentManager;
 import org.springfield.lou.application.components.types.proxy.RemoteProxy;
+import org.springfield.lou.fs.FSXMLStrainer;
 import org.springfield.lou.fs.FsNode;
 import org.springfield.lou.fs.NodeObserver;
 import org.springfield.lou.homer.LazyHomer;

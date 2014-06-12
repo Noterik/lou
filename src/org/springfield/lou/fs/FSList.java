@@ -41,7 +41,7 @@ public class FSList {
 	private String id;
 	private List<FsNode> nodes;
 	private Map<String, List<FsNode>> QueryCache = new HashMap<String, List<FsNode>>(); 
-	private Map<String, String> properties = new HashMap<String, String>();
+	private Map<String, String> properties = new HashMap<String, String>(); // future use to store 'collection' properties from the filesystem
 	
 
 	public FSList(String uri) {

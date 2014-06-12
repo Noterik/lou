@@ -23,11 +23,10 @@ package org.springfield.lou.application;
 
 import java.util.Map;
 
-import noterik.fsxml.strainer.FSXMLStrainer;
-
 import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.components.ComponentManager;
 import org.springfield.lou.screen.*;
+import org.springfield.lou.fs.FSXMLStrainer;
 
 /**
  * Html5Application interface
