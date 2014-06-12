@@ -91,7 +91,8 @@ public class FSList {
 	
 	public void addNode(FsNode n) {
 		nodes.add(n);
-		
+		QueryCache = new HashMap<String, List<FsNode>>(); 
+
 	}
 	
 	public FsNode getNode(String path) {
@@ -102,7 +103,7 @@ public class FSList {
 				return n;
 			}
 		}
-		System.out.println("NOT FOUND="+path);
+		//System.out.println("NOT FOUND="+path);
 		return null;
 	}
 	
