@@ -54,6 +54,7 @@ public class MaggieLoader extends Thread {
 		providers.add("luce");
 		providers.add("rtvs");
 		providers.add("bbc");
+		providers.add("vrt");
 		providers.add("tvp");
 		start();
 	}
