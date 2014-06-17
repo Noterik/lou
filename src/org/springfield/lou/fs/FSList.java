@@ -186,6 +186,10 @@ public class FSList {
 		return endresult;
 	}
 	
+	public void clearQueryCache() {
+		QueryCache.clear();
+	}
+	
 	public List<FsNode> getNodesSorted(String sortkey,String direction) {
 		List<FsNode> cresult = QueryCache.get(sortkey+direction);
 		if (cresult!=null) return cresult;

@@ -47,8 +47,13 @@ public class FSListManager {
 	private static Map<String, FSList> lists = new HashMap<String, FSList>();
 	
 	public static FSList get(String uri) {
+		return get(uri,true);
+	}
+	
+	public static FSList get(String uri,boolean cache) {
 		// see if we already have it loaded
-		FSList list = lists.get(uri);
+		FSList list = null;
+		if (cache) list = lists.get(uri);
 		if (list==null && uri.indexOf("*")==-1) {
 			List<FsNode> l=getNodes(uri,2,0,0);
 			list = new FSList(uri,l);
@@ -82,6 +87,10 @@ public class FSListManager {
 			lists.put(cacheKey, list);
 		}
 		return list;
+	}
+	
+	public static void clearCache() {
+		lists.clear();
 	}
 	
 	public static List<FsNode> getNodes(String path,int depth, int start, int limit) {

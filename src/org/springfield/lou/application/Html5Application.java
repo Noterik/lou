@@ -720,6 +720,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     	this.observingNodes.remove(node);
     }
     
+    
     private void eddieLog(Screen s,String content) {
     	  	String[] parts = content.split(",");
     	  	String l = parts[1];
