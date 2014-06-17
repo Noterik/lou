@@ -40,8 +40,11 @@ public class FSSets {
 	private Map<String, List<FsNode>> sets =  new HashMap<String, List<FsNode>>();;
 	//private List<String> values = new ArrayList<String>();
 	
-	
 	public FSSets(List<FsNode> nodes,String field) {
+		this(nodes,field,false);
+	}
+	
+	public FSSets(List<FsNode> nodes,String field,boolean unassigned) {
 		// divide the nodes based on the field
 		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
 			FsNode n = (FsNode)iter.next();	
@@ -54,11 +57,23 @@ public class FSSets {
 					sets.put(f, set);
 				}
 				set.add(n);
+			} else if (unassigned) {
+				// set the correct set
+				List<FsNode> set = sets.get("unassigned");
+				if (set==null) {
+					set = new ArrayList<FsNode>();
+					sets.put("unassigned", set);
+				}
+				set.add(n);	
 			}
 		}	
 	}
 	
 	public FSSets(List<FsNode> nodes) {
+		this(nodes,false);
+	}
+	
+	public FSSets(List<FsNode> nodes,boolean unassigned) {
 		// divide the nodes based on the field
 		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
 			FsNode n = (FsNode)iter.next();	
@@ -69,6 +84,14 @@ public class FSSets {
 				if (set==null) {
 					set = new ArrayList<FsNode>();
 					sets.put(f, set);
+				}
+				set.add(n);
+			} else if (unassigned) {
+				// set the correct set
+				List<FsNode> set = sets.get("unassigned");
+				if (set==null) {
+					set = new ArrayList<FsNode>();
+					sets.put("unassigned", set);
 				}
 				set.add(n);
 			}
