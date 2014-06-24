@@ -59,12 +59,17 @@ public class MaggieLoader extends Thread {
 		start();
 	}
 	
-	/*
-	public void run() {
-		
+	public synchronized String getNextProvider() {
+		if (providers.size()>0) {
+			String provider = providers.get(0);
+			providers.remove(0);
+			System.out.println("PROVIDERS LEFT="+providers.size());
+			return provider;
+		}
+		return null;
 	}
-	*/
 
+	
 	public void run() {
 		FSList test = FSListManager.get("/domain/euscreenxl/user/*/*");
 		if (test!=null) {
@@ -76,75 +81,16 @@ public class MaggieLoader extends Thread {
 		}
 		long starttime = new Date().getTime(); // we track the request time for debugging only
 
-    	FSList fslist = null;
-    	int total = providers.size();
-    	int readycount = 0;
-    	int i=0;
-		for(Iterator<String> iter = providers.iterator() ; iter.hasNext(); ) {
-			String provider = (String)iter.next();	
-			i++;
-			System.out.println("LOADING PROVIDER = "+provider);
-			if (fslist==null) {
-				fslist = FSListManager.get("/domain/euscreenxl/user/eu_"+provider+"/video");
-				FSListManager.put("/domain/euscreenxl/user/*/*",fslist);
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/audio",fslist);
-				readycount++;
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/series",fslist);
-				readycount++;
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/picture",fslist);
-				readycount++;
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/doc",fslist);
-				readycount++;			
-			} else {
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/video",fslist);
-				readycount++;
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/audio",fslist);
-				readycount++;
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/series",fslist);
-				readycount++;
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/picture",fslist);
-				readycount++;
-				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_"+provider+"/doc",fslist);
-				readycount++;
-			}
-		}
-		
-		/*
-		while (readycount!=1) {
-			try {
-                synchronized (obj) {
-                    obj.wait();
-    				readycount=readycount-1;
-                }
-				System.out.println("THREADS READYCOUNT="+readycount);
-			} catch(Exception e) {
-				System.out.println("WAIT ERROR IN MAGGIE");
-				e.printStackTrace();
-			}
-		}
-		*/
-    			
+    	FSList fslist = new FSList("/domain/euscreenxl/user/*/*");
 		FSListManager.put("/domain/euscreenxl/user/*/*",fslist);
-    	
-    	// hack lets add decade info
-		for(Iterator<FsNode> iter = fslist.getNodes().iterator() ; iter.hasNext(); ) {
-			FsNode n = (FsNode)iter.next();	
-			String year = n.getProperty("SpatioTemporalInformation_TemporalInformation_productionYear");
-			if (year==null) {
-				year = n.getProperty("SpatioTemporalInformation_TemporalInformation_broadcastDate");
-				if (year!=null) {
-					year = year.substring(year.lastIndexOf("/")+1);
-					//System.out.println("FIXED YEAR = "+year);
-					n.setProperty("SpatioTemporalInformation_TemporalInformation_productionYear", year);
-				}
-			}
-
-		}
-		long endtime = new Date().getTime(); // we track the request time for debugging only
-
-		System.out.println("PREVIEW CACHING DONE TOTAL = "+fslist.size()+" TIME="+(endtime-starttime)/1000+"seconds");
+		for (int i=0;i<4;i++) { // start multiple threads
+				new MaggieLoadThread(obj, this,"/domain/euscreenxl/user/eu_",fslist,i);
+		}		
+    			
 
 	}
+
+	
 
 
 }

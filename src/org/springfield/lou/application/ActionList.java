@@ -42,14 +42,14 @@ public class ActionList {
 		for (int j=0;j<blocks.size();j++) {
 			cmds = blocks.get(j);
 			Boolean whenvalid = true;
-			System.out.println("WHEN="+cmds.get(0)[0]+"*");
+		//	System.out.println("WHEN="+cmds.get(0)[0]+"*");
 			if (cmds.get(0)[0].equals(".when")) {
 				whenvalid = whenCheck(s,cmds.get(0));
 			} 
 			if (whenvalid) {
 				for (int i=0;i<cmds.size();i++) {
 					String[] cmd = cmds.get(i);
-					System.out.println("EXECUTE COMMAND "+j+" "+i+" = "+cmd[0]);
+					//System.out.println("EXECUTE COMMAND "+j+" "+i+" = "+cmd[0]);
 					String action = cmd[0].toLowerCase();
 					if (action.equals("addreferid"))	{ handleAddReferid(cmd[1],cmd[2]); }
 					else if (action.equals("loadstylesheet"))	{ handleLoadStyleSheet(s,cmd[1],cmd[2]); }
@@ -89,7 +89,7 @@ public class ActionList {
 				if (value.equals("aphone") && cap.getDeviceMode()==cap.MODE_APHONE_LANDSCAPE) return true;
 				if (value.equals("aphone") && cap.getDeviceMode()==cap.MODE_APHONE_PORTRAIT) return true;
 			}
-			System.out.println("DEVICE="+cap.getDeviceMode()+" "+cap.getDeviceModeName());
+			//System.out.println("DEVICE="+cap.getDeviceMode()+" "+cap.getDeviceModeName());
 		}
 		return false;
 	}
@@ -102,7 +102,7 @@ public class ActionList {
 			if (content!=null && !content.equals("")) {
 				method = app.getClass().getMethod(methodname,Screen.class,String.class);
 				if (method!=null) {
-					System.out.println("METHOD FOUND="+method);
+					//System.out.println("METHOD FOUND="+method);
 					method.invoke(app,s,content);
 				} else {
 					System.out.println("MISSING!!! METHOD ="+method);
@@ -110,7 +110,7 @@ public class ActionList {
 			} else {
 				method = app.getClass().getMethod(methodname,Screen.class);
 				if (method!=null) {
-					System.out.println("METHOD FOUND="+method);
+					//System.out.println("METHOD FOUND="+method);
 					method.invoke(app,s);	
 				} else {
 					System.out.println("MISSING!!! METHOD ="+method);
@@ -129,7 +129,6 @@ public class ActionList {
 	
 	private void handleLoadStyleSheet(Screen s,String scope,String name) {
 		// example : loadstylesheet,screen,generic
-		System.out.println("WEEEE="+name);
 		if (name.equals("generic")) {
 			app.loadStyleSheet(s,app.getAppname());
 		} else {

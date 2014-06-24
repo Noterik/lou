@@ -56,6 +56,7 @@ public class Fs {
 			return null; // node not found
 		}
  		try { 
+ 			//System.out.println("HTTPNODE="+node);
 			Document doc = DocumentHelper.parseText(node);
 			for(Iterator<Node> iter = doc.getRootElement().nodeIterator(); iter.hasNext(); ) {
 				Element p = (Element)iter.next();

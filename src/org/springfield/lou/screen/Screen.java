@@ -265,7 +265,7 @@ public class Screen {
 				stylepath = packagepath + style.substring(pos+1);
 			}
 		}
-		System.out.println("LOADING STYLE="+stylepath);
+		//System.out.println("LOADING STYLE="+stylepath);
 		if (style.equals("apps/dashboard/css/dashboardapp.css")) {
 			stylepath="/springfield/tomcat/webapps/ROOT/eddie/apps/dashboard/css/generic.css";
 		}
@@ -299,7 +299,7 @@ public class Screen {
 					stylepath = packagepath + "css/generic.css";
 				}
 			}
-			System.out.println("LOADING STYLE="+stylepath);
+		//	System.out.println("LOADING STYLE="+stylepath);
 //			stylepath ="C:\\\\springfield\\tomcat\\webapps\\ROOT\\eddie\\"+stylepath;
 			 str = null;
 			try {

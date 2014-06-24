@@ -131,7 +131,7 @@ public class LouServlet extends HttpServlet {
 				params = "actionlist="+paths[1];
 			}
 		}
-		System.out.println("PARAMS2="+params);
+		//System.out.println("PARAMS2="+params);
 		
 		int pos = body.indexOf("/html5application/");
 		if (pos!=-1) {
@@ -529,7 +529,7 @@ public class LouServlet extends HttpServlet {
 					caps.addCapability("ipnumber", request.getRemoteAddr());
 					
 					Screen screen = app.getNewScreen(caps,params);
-					System.out.println("PARAMSET="+params);
+					//System.out.println("PARAMSET="+params);
 					screen.setParameters(params);
 					
 					// see if we need to override the location
@@ -565,7 +565,7 @@ public class LouServlet extends HttpServlet {
 		Iterator it = urlmappings.keySet().iterator();
 		while(it.hasNext()){
 			String mapurl = (String) it.next();
-			System.out.println("MAP CHECK ON =*"+mapurl+"* *"+inurl+"*");
+			//System.out.println("MAP CHECK ON =*"+mapurl+"* *"+inurl+"*");
 			if (inurl.equals(mapurl)) {
 				String[] paths = urlmappings.get(mapurl).split(",");
 				return paths;

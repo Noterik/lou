@@ -269,8 +269,8 @@ public class LazyHomer implements MargeObserver {
 		LazyHomer.sendRequest("PUT", "/domain/internal/service/lou/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
 		
 		// memory update 27apr2014
-		Runtime runtime = Runtime.getRuntime();
-		System.out.println("USED MEM="+((runtime.totalMemory() - runtime.freeMemory()) / (1024*1024)));
+	//	Runtime runtime = Runtime.getRuntime();
+	//	System.out.println("USED MEM="+((runtime.totalMemory() - runtime.freeMemory()) / (1024*1024)));
 	}
 	
 	public static void send(String method, String uri) {

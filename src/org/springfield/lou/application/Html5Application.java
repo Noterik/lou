@@ -191,7 +191,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			}
 		} else if (location_scope.equals("screen")) {
 			String loc = screen.getId();
-			System.out.println("SCREEN LOC ID="+loc);
+			//System.out.println("SCREEN LOC ID="+loc);
 			if (loc!=null)  {
 				Location nloc = new Location(loc, screen);
 				LocationManager.put(nloc);
@@ -659,7 +659,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	public void onNewScreen(Screen s) {
 		//loadContent(s, "signal"); old code ?
 		String extraactionlist = s.getParameter("actionlist");
-		System.out.println("EXTRALIST="+extraactionlist);
+		//System.out.println("EXTRALIST="+extraactionlist);
 		if (extraactionlist!=null) {
 			executeActionlist(s,extraactionlist);
 		} else {

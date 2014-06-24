@@ -114,7 +114,6 @@ public class FSListManager {
 			Document doc = DocumentHelper.parseText(nodes);
 
 			if (isMainNode(path)) {
-				System.out.println("IS MAIN NODE "+new Date().getTime());
 				for(Iterator<Node> iter = doc.getRootElement().nodeIterator(); iter.hasNext(); ) {
 					Element node = (Element)iter.next();
 					FsNode nn = new FsNode();
