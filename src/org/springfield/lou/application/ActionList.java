@@ -55,6 +55,7 @@ public class ActionList {
 					else if (action.equals("loadstylesheet"))	{ handleLoadStyleSheet(s,cmd[1],cmd[2]); }
 					else if (action.equals("setrole"))	{ handleSetRole(s,cmd[1],cmd[2]); }
 					else if (action.equals("loadcontent"))	{ handleLoadContent(s,cmd[1],cmd[2]); }
+					else if (action.equals("removecontent"))	{ handleRemoveContent(s,cmd[1],cmd[2]); }
 					else if (action.equals("setcontent"))	{ handleSetContent(s,cmd[1],cmd[2],cmd[3]); }
 					else if (action.equals("log"))	{ 
 							if (cmd.length>2) { 
@@ -98,7 +99,6 @@ public class ActionList {
 		// example : callserver,open,screen,content
 		try {
 			Method method;
-			System.out.println("content="+content);
 			if (content!=null && !content.equals("")) {
 				method = app.getClass().getMethod(methodname,Screen.class,String.class);
 				if (method!=null) {
@@ -150,6 +150,13 @@ public class ActionList {
 		}
 	}
 
+	private void handleRemoveContent(Screen s,String scope,String name) {
+		// example : removecontent,screen,titlepart
+		if (scope.equals("screen")) {
+			s.removeContent(name);
+		}
+	}
+	
 	private void handleSetContent(Screen s,String scope,String name,String body) {
 		// example : setcontent,defaultoutput,"Website app main"
 		if (scope.equals("screen")) {

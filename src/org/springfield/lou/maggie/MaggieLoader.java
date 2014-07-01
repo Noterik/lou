@@ -22,10 +22,8 @@ package org.springfield.lou.maggie;
 
 import java.util.*;
 
-import javax.swing.plaf.multi.MultiLookAndFeel;
-
 import org.springfield.lou.application.components.types.OpenappsComponent;
-import org.springfield.lou.fs.*;
+import org.springfield.fs.*;
 
 public class MaggieLoader extends Thread {
 	

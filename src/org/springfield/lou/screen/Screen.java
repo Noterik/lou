@@ -92,6 +92,10 @@ public class Screen {
 		}
 	}
 	
+	public Html5ApplicationInterface getApplication() {
+		return app;
+	}
+	
 	public Map<String, String[]> getParameters() {
 		return params;
 	}
@@ -205,6 +209,11 @@ public class Screen {
 	 */
 	public void removeContent(String t, Html5ApplicationInterface app){
 		removeContent(t, false, app);
+	}
+	
+	public void removeContent(String t){
+		System.out.println("REMOVE="+t);
+		removeContent(t, false, getApplication());
 	}
 	
 	public void removeContent(String t, boolean leaveElement, Html5ApplicationInterface app){
@@ -493,7 +502,12 @@ public class Screen {
 	
 	public void onNewUser(String name) {
 		username = name;
+		System.out.println("onNewUser="+name);
 		app.onNewUser(this, name);
+	}
+	
+	public void onLoginFail(String name) {
+		app.onLoginFail(this, name);
 	}
 	
 	public void onLogoutUser(String name) {
