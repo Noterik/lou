@@ -40,6 +40,54 @@ public class ActionListManager {
 	
 	private void readActionLists() {
 		String actiondir = app.getHtmlPath()+"/actionlists";
+		File dir = new File(actiondir);
+		if (!dir.exists()) return; // return if no actionlists dir
+		readActionDir(dir,actiondir,"");
+	}
+	
+	private void readActionDir(File dir,String actiondir,String prefix) { // will be called recursive
+		String[] files = dir.list();
+		System.out.println("PREFIX="+prefix);
+		for (int i=0;i<files.length;i++) {
+			String filename = files[i];
+			System.out.println("ACTION FILE="+filename);
+			File dircheck = new File(actiondir+File.separator+prefix+filename);
+			if (dircheck.isDirectory()) {
+				readActionDir(dircheck,actiondir,prefix+filename+"/");	
+			} else {
+			ActionList maf = new ActionList(app,prefix+filename.substring(0,filename.indexOf(".")));
+			actionlists.put(maf.getName(), maf);
+			try {
+				BufferedReader br = new BufferedReader(new FileReader(actiondir+File.separator+prefix+filename));
+				StringBuffer str = new StringBuffer();
+				String command = br.readLine();
+				while (command != null) {
+					String urlmapping = command.toLowerCase();
+					if (urlmapping.indexOf("seturltrigger")==0) {
+						urlmapping = urlmapping.substring(urlmapping.indexOf("(")+1);
+						urlmapping = urlmapping.substring(0,urlmapping.indexOf(")"));
+						LouServlet.addUrlTrigger(urlmapping,maf.getName());
+					} else {
+						if (command.startsWith(".when ")) {
+							maf.startWhenBlock(command);
+						} else if (command.equals("")) {
+							maf.endBlock();
+						} else {
+							maf.addCommand(command);
+						}
+					}
+					command = br.readLine();
+				}
+				maf.endBlock();
+			} catch(Exception e) {
+				
+			}
+		}
+		}
+	}
+	
+	private void readActionLists_old() {
+		String actiondir = app.getHtmlPath()+"/actionlists";
 
 		System.out.println("ACTIONDIR="+actiondir);
 		File dir = new File(actiondir);

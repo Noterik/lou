@@ -48,8 +48,11 @@ public class DashboardApplication extends Html5Application {
 	}
 	
 	public void onNewUser(Screen s,String name) {
+		System.out.println("onNewUser2="+name);
 		super.onNewUser(s, name);
+		System.out.println("onNewUser3="+name);
 		if (name.equals("admin")) {
+			System.out.println("onNewUser4="+name);
 			loadContent(s, "debug","debugmode");		
 			loadContent(s, "logger","logger");
 			loadContent(s, "opentools");

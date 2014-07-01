@@ -24,9 +24,11 @@ package org.springfield.lou.application.components.types;
 import java.util.List;
 
 import org.springfield.lou.application.components.BasicComponent;
-import org.springfield.lou.fs.*;
+import org.springfield.fs.*;
 import org.springfield.lou.homer.LazyMarge;
 import org.springfield.lou.homer.MargeObserver;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * UsermanagerComponent
@@ -97,11 +99,27 @@ public class UsermanagerComponent extends BasicComponent implements MargeObserve
 		return line;
 	}
 		
-	private void showUsers(String domain) {
+	private void showUsers(String searchkey) {
+		System.out.println("SHOW USERS"+searchkey);
 		String body ="<table>";
 		body += "<tr><th colspan=\"2\">account name</th></tr>";
-		List<FsNode> nodes = Fs.getNodes("/domain/"+getApplication().getDomain()+"/user",0);
-		for (int i=0;i<nodes.size();i++) {
+		//List<FsNode> nodes = Fs.getNodes("/domain/"+getApplication().getDomain()+"/user",0);
+		
+		FSList fslist = FSListManager.get("/domain/"+getApplication().getDomain()+"/user",0,false);
+		List<FsNode> nodes = null;
+		if (searchkey!=null && !searchkey.equals("") && !searchkey.equals("*")) {
+			body += "<tr><td colspan=\"2\"><input name=\"key\" size=\"12\" value=\""+searchkey+"\" onchange=\"eddie.putLou('usermanager','showusers('+this.value+')')\"/></td></tr>";
+
+			nodes = fslist.getNodesByIdMatch(searchkey);
+		} else {
+			body += "<tr><td colspan=\"2\"><input name=\"key\" size=\"12\" value=\"*\" onchange=\"eddie.putLou('usermanager','showusers('+this.value+')')\"/></td></tr>";
+			nodes = fslist.getNodes();
+		}
+		
+		int max = nodes.size();
+		if (max>20) max = 20; // until we have length filter
+		
+		for (int i=0;i<max;i++) {
 			FsNode node = nodes.get(i);
 			body += "<tr><td colspan=\"2\" onmouseover=\"this.className='on'\" onmouseout=\"this.className='off'\" onmouseup=\"eddie.putLou('usermanager','showuser("+node.getId()+")')\">"+node.getId()+"</td></tr>";
 		}
@@ -130,7 +148,17 @@ public class UsermanagerComponent extends BasicComponent implements MargeObserve
 			String value = params[2];
 			String path = "/domain/"+getApplication().getDomain()+"/user/"+user+"/account/default";
 			System.out.println("PATH="+path+" P="+name+" V="+value);
-			Fs.setProperty(path, name, value);
+			if (name.equals("password")) {
+				System.out.println("SETTING PASSWORD");
+				ServiceInterface barney = ServiceManager.getService("barney");
+				if (barney!=null) {
+					System.out.println("Barney interface = "+barney);			
+					String result = barney.put("setpassword("+getApplication().getDomain()+","+user+")", value, null);
+					Fs.setProperty(path, name, "$shadow");
+				} else {
+					Fs.setProperty(path, name, value);
+				}
+			}
 		}
 	}
 }

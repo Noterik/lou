@@ -685,6 +685,12 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			u.addScreen(s);
 		}
 		ApplicationManager.update();
+		System.out.println("NewUser APP="+appname);
+		if (!appname.equals("dashboard")) executeActionlist(s,"newuser");
+	}
+	
+	public void onLoginFail(Screen s,String id) {
+		executeActionlist(s,"login/loginfail");
 	}
 	
     public String getApplicationCSS(String name) {

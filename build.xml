@@ -67,6 +67,16 @@
 				<exclude name="WEB-INF/lib/servlet.jar"/>
 				<exclude name="WEB-INF/lib/servlet-api.jar"/>
 				<exclude name="WEB-INF/lib/jsp-api.jar"/>
+				<exclude name="WEB-INF/lib/mojo.jar"/>
+				<exclude name="WEB-INF/lib/dom4j-1.6.1.jar"/>
+				<exclude name="WEB-INF/lib/log4j-1.2.15.jar"/>
+				<exclude name="WEB-INF/lib/org.apache.commons.codec.jar"/>
+				<exclude name="WEB-INF/lib/org.apache.commons.httpclient.jar"/>
+				<exclude name="WEB-INF/lib/org.apache.commons.logging.jar"/>
+				<exclude name="WEB-INF/lib/jaxen-1.1.1.jar"/>
+				<exclude name="WEB-INF/lib/org.restlet.jar" />
+				<exclude name="WEB-INF/lib/com.noelios.restlet.jar"/>
+				<exclude name="WEB-INF/lib/com.noelios.restlet.ext.servlet_2.4.jar"/>
 			</fileset>
 		</war>
 	</target>

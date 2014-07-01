@@ -1,7 +1,7 @@
 package org.springfield.lou.maggie;
 
-import org.springfield.lou.fs.FSList;
-import org.springfield.lou.fs.FSListManager;
+import org.springfield.fs.FSList;
+import org.springfield.fs.FSListManager;
 
 public class MaggieLoadThread extends Thread{
 	private MaggieLoader ml;

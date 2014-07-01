@@ -71,6 +71,7 @@ public interface Html5ApplicationInterface {
 	public ScreenManager getScreenManager();
 	public String getLibPaths();
 	public void onNewUser(Screen s,String name);
+	public void onLoginFail(Screen s,String name);
 	public void onLogoutUser(Screen s,String name);
 	public int getScreenCount();
 	public int getUserCount();
