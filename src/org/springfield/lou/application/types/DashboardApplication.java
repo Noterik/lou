@@ -62,7 +62,7 @@ public class DashboardApplication extends Html5Application {
 	}
 	
 	public void newApplicationFound(String name) {
-		System.out.println("NEW APP="+name);
+		//System.out.println("NEW APP="+name);
 		AvailableappsComponent comp = (AvailableappsComponent)getComponentManager().getComponent("availableapps");
 		if (comp!=null) {
 			comp.update();

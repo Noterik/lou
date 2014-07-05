@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.springfield.lou.application.ApplicationManager;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.homer.LouProperties;
 import org.springfield.lou.maggie.MaggieLoader;
@@ -97,7 +98,7 @@ public class LouServer {
         
 		// init properties xml
 		initConfigurationXML();		
-
+		ApplicationManager.instance(); // trigger the start of the manager
 		running = true;
 	}
 	

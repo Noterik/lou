@@ -83,7 +83,6 @@ public class Screen {
 	}
 	
 	public String getParameter(String name) {
-		if (params==null) System.out.println("PARAMS NOT SET");
 		String[] values = params.get(name);
 		if (values!=null) {
 			return values[0];
@@ -180,7 +179,6 @@ public class Screen {
 	 * @param data the data to be sent
 	 */
 	public void addContent(String t,String c){
-		System.out.println("ADD CALLED");
 		if (data==null) {
 			data = "add("+t+")="+c;
 		} else {
@@ -212,7 +210,6 @@ public class Screen {
 	}
 	
 	public void removeContent(String t){
-		System.out.println("REMOVE="+t);
 		removeContent(t, false, getApplication());
 	}
 	
@@ -264,7 +261,7 @@ public class Screen {
 	
 	public void loadStyleSheet(String style, Html5ApplicationInterface app) {
 		//TODO: make this at least windows compatible or configurable
-		System.out.println("Screen.loadStyleSheet(" + style + ", " + app + ")");
+		//System.out.println("Screen.loadStyleSheet(" + style + ", " + app + ")");
 		String stylepath ="/springfield/tomcat/webapps/ROOT/eddie/"+style;
 		
 		String packagepath = app.getHtmlPath();
@@ -502,7 +499,7 @@ public class Screen {
 	
 	public void onNewUser(String name) {
 		username = name;
-		System.out.println("onNewUser="+name);
+		//System.out.println("onNewUser="+name);
 		app.onNewUser(this, name);
 	}
 	
@@ -512,7 +509,7 @@ public class Screen {
 	
 	public void onLogoutUser(String name) {
 		username = null;
-		System.out.println("USERLOGOUT="+name);
+		//System.out.println("USERLOGOUT="+name);
 		app.onLogoutUser(this, name);
 	}
 	

@@ -24,13 +24,13 @@ public class ActionListManager {
         if (pos!=-1) {
             String content = name.substring(pos+1,name.length()-1);
             name = name.substring(0,pos);
-    			System.out.println("execute action list "+name+" on "+app.getId());
+    			//System.out.println("execute action list "+name+" on "+app.getId());
     			ActionList maf = actionlists.get(name);
     			if (maf!=null) {
     				maf.execute(s,content);
     			}
         } else {
-        		System.out.println("execute action list "+name+" on "+app.getId());
+        		//System.out.println("execute action list "+name+" on "+app.getId());
         		ActionList maf = actionlists.get(name);
         		if (maf!=null) {
         			maf.execute(s);
@@ -47,10 +47,10 @@ public class ActionListManager {
 	
 	private void readActionDir(File dir,String actiondir,String prefix) { // will be called recursive
 		String[] files = dir.list();
-		System.out.println("PREFIX="+prefix);
+		//System.out.println("PREFIX="+prefix);
 		for (int i=0;i<files.length;i++) {
 			String filename = files[i];
-			System.out.println("ACTION FILE="+filename);
+			//System.out.println("ACTION FILE="+filename);
 			File dircheck = new File(actiondir+File.separator+prefix+filename);
 			if (dircheck.isDirectory()) {
 				readActionDir(dircheck,actiondir,prefix+filename+"/");	
@@ -66,7 +66,7 @@ public class ActionListManager {
 					if (urlmapping.indexOf("seturltrigger")==0) {
 						urlmapping = urlmapping.substring(urlmapping.indexOf("(")+1);
 						urlmapping = urlmapping.substring(0,urlmapping.indexOf(")"));
-						LouServlet.addUrlTrigger(urlmapping,maf.getName());
+					//	LouServlet.addUrlTrigger(urlmapping,maf.getName());
 					} else {
 						if (command.startsWith(".when ")) {
 							maf.startWhenBlock(command);
@@ -86,45 +86,39 @@ public class ActionListManager {
 		}
 	}
 	
-	private void readActionLists_old() {
-		String actiondir = app.getHtmlPath()+"/actionlists";
-
-		System.out.println("ACTIONDIR="+actiondir);
+	public static void readActionListsDirForUrlTriggers(String actiondir) {
 		File dir = new File(actiondir);
 		if (!dir.exists()) return; // return if no actionlists dir
-		
+		readActionDirForUrlTriggers(dir,actiondir,"");
+	}
+	
+	private static void readActionDirForUrlTriggers(File dir,String actiondir,String prefix) { // will be called recursive
 		String[] files = dir.list();
-
+		//System.out.println("PREFIX="+prefix);
 		for (int i=0;i<files.length;i++) {
 			String filename = files[i];
-			System.out.println("ACTION FILE="+filename);
-			ActionList maf = new ActionList(app,filename.substring(0,filename.indexOf(".")));
-			actionlists.put(maf.getName(), maf);
-			try {
-				BufferedReader br = new BufferedReader(new FileReader(actiondir+File.separator+filename));
-				StringBuffer str = new StringBuffer();
-				String command = br.readLine();
-				while (command != null) {
-					String urlmapping = command.toLowerCase();
-					if (urlmapping.indexOf("seturltrigger")==0) {
-						urlmapping = urlmapping.substring(urlmapping.indexOf("(")+1);
-						urlmapping = urlmapping.substring(0,urlmapping.indexOf(")"));
-						LouServlet.addUrlTrigger(urlmapping,maf.getName());
-					} else {
-						if (command.startsWith(".when ")) {
-							maf.startWhenBlock(command);
-						} else if (command.equals("")) {
-							maf.endBlock();
-						} else {
-							maf.addCommand(command);
+			//System.out.println("ACTION FILE="+filename);
+			File dircheck = new File(actiondir+File.separator+prefix+filename);
+			if (dircheck.isDirectory()) {
+				readActionDirForUrlTriggers(dircheck,actiondir,prefix+filename+"/");	
+			} else {
+				try {
+					BufferedReader br = new BufferedReader(new FileReader(actiondir+File.separator+prefix+filename));
+					StringBuffer str = new StringBuffer();
+					String command = br.readLine();
+					while (command != null) {
+						String urlmapping = command.toLowerCase();
+						if (urlmapping.indexOf("seturltrigger")==0) {
+							urlmapping = urlmapping.substring(urlmapping.indexOf("(")+1);
+							urlmapping = urlmapping.substring(0,urlmapping.indexOf(")"));
+							LouServlet.addUrlTrigger(urlmapping,filename.substring(0,filename.length()-4));
 						}
+						command = br.readLine();
 					}
-					command = br.readLine();
-				}
-				maf.endBlock();
-			} catch(Exception e) {
-				
+				} catch(Exception e) {}
 			}
 		}
 	}
+
+	
 }
