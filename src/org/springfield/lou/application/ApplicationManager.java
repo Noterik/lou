@@ -37,10 +37,11 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.springfield.lou.application.components.types.OpenappsComponent;
 import org.springfield.lou.application.types.DashboardApplication;
-import org.springfield.lou.fs.FSList;
-import org.springfield.lou.fs.FsNode;
+import org.springfield.fs.*;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.maggie.MaggieLoader;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Application manager
@@ -272,8 +273,12 @@ public class ApplicationManager extends Thread {
 	    	    Html5AvailableApplication vapp = getAvailableApplication(appname);
 	        	String newbody ="<fsxml><properties></properties></fsxml>";	
 	        	
-				String result = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
-    			System.out.println("RESULTD="+result);
+	        	ServiceInterface smithers = ServiceManager.getService("smithers");
+	        	if (smithers==null) return; 
+				smithers.get("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
+
+	        	//String result = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
+    			//System.out.println("RESULTD="+result);
     			// make all the dirs we need
     			File md = new File(writedir);
     			md.mkdirs();
@@ -469,7 +474,10 @@ public class ApplicationManager extends Thread {
     	availableapps = new HashMap<String, Html5AvailableApplication>();
     	String xml = "<fsxml><properties><depth>2</depth></properties></fsxml>";
 		long starttime = new Date().getTime(); // we track the request time for debugging only
-    	String nodes = LazyHomer.sendRequest("GET","/domain/internal/service/lou/apps",xml,"text/xml");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return;
+		
+    	String nodes = smithers.get("/domain/internal/service/lou/apps",xml,"text/xml");
     	//System.out.println("APP NODECOUNT="+nodes.length());
 		long endtime = new Date().getTime(); // we track the request time for debugging only
 		//System.out.println("SMITHERSTIME="+(endtime-starttime));

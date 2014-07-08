@@ -24,6 +24,8 @@ package org.springfield.lou.application.components.types.debugger;
 import java.util.List;
 
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Put command for filesystem debugger
@@ -53,7 +55,15 @@ public class Put {
 				}
 			}
 			String postpath = currentpath+params[1];
-			LazyHomer.sendRequest("PUT",postpath,newbody,"text/xml");
+			//LazyHomer.sendRequest("PUT",postpath,newbody,"text/xml");
+			
+			ServiceInterface smithers = ServiceManager.getService("smithers");
+			if (smithers==null) {
+				buffer.add("> Error smithers down");
+				return;
+			}
+			smithers.put(postpath,newbody,"text/xml");
+			
 			buffer.add("> put "+params[1]+" "+newbody);
 		} else {
 			buffer.add("> put");

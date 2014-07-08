@@ -32,9 +32,7 @@ import java.util.Set;
 import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.components.ComponentManager;
 import org.springfield.lou.application.components.types.proxy.RemoteProxy;
-import org.springfield.lou.fs.FSXMLStrainer;
-import org.springfield.lou.fs.FsNode;
-import org.springfield.lou.fs.NodeObserver;
+import org.springfield.fs.*;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.location.Location;
 import org.springfield.lou.location.LocationManager;
@@ -43,6 +41,7 @@ import org.springfield.lou.screen.Screen;
 import org.springfield.lou.screen.ScreenManager;
 import org.springfield.lou.user.User;
 import org.springfield.lou.user.UserManager;
+import org.springfield.lou.util.NodeObserver;
 
 /**
  * Html5Application

@@ -24,6 +24,8 @@ package org.springfield.lou.application.components.types.debugger;
 import java.util.List;
 
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Rm command for filesystem debugger
@@ -36,6 +38,12 @@ import org.springfield.lou.homer.LazyHomer;
 public class Rm {
 	
 	public static void execute(List<String> buffer,String currentpath,String[] params) {
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) {
+			buffer.add("> Error smithers down");
+			return;
+		}
+		
 		if (params.length==1) {
 			buffer.add("> rm ");
 			buffer.add("missing filename");	
@@ -50,7 +58,8 @@ public class Rm {
 		}
 		
 		buffer.add("> rm "+params[1]+" done");		
-		String result = LazyHomer.sendRequestBart("DELETE",currentpath+params[1],null,null);
+		//String result = LazyHomer.sendRequestBart("DELETE",currentpath+params[1],null,null);
+		String result = smithers.delete(currentpath+params[1],null,null);
 		System.out.println("R="+result);
 	}
 }

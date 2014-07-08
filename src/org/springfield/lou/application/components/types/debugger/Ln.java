@@ -22,8 +22,10 @@ package org.springfield.lou.application.components.types.debugger;
 
 import java.util.List;
 
-import org.springfield.lou.fs.Fs;
+import org.springfield.fs.Fs;
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Ln command for filesystem debugger
@@ -37,15 +39,24 @@ public class Ln {
 	
 	public static boolean execute(List<String> buffer,String currentpath,String[] params) {
 		System.out.println("DOING A LN");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) {
+			buffer.add("> Error smithers down");
+			return false;
+		}
+		
 		String postpath = currentpath+params[1];
 		if (Fs.isMainNode(postpath)) {
 			String newbody = "datatype=attributes&referid="+params[2];
-			String result = LazyHomer.sendRequest("POST",postpath,newbody,"text/xml");
+			//String result = LazyHomer.sendRequest("POST",postpath,newbody,"text/xml");
+			String result = smithers.post(postpath,newbody,"text/xml");
 			buffer.add("> ln(m) "+params[1]+" "+newbody);
 			System.out.println("RESULT="+result);
 		} else {
 			String newbody = "<fsxml><attributes><referid>"+params[2]+"</referid></attributes></fsxml>"; 
-			LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
+			//LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
+			smithers.put(postpath+"/attributes",newbody,"text/xml");
+
 			buffer.add("> ln(i) "+params[1]+" "+newbody);
 		}
 		return true;

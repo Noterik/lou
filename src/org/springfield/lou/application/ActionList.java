@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.springfield.lou.fs.FsNode;
+import org.springfield.fs.FsNode;
 import org.springfield.lou.screen.Capabilities;
 import org.springfield.lou.screen.Screen;
 

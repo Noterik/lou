@@ -66,6 +66,10 @@ public class UsermanagerComponent extends BasicComponent implements MargeObserve
 		body += "<tr><th colspan=\"3\">account settings for "+user+"</th></tr>";
 		String nodepath="/domain/"+getApplication().getDomain()+"/user/"+user+"/account/default";
 		FsNode node = Fs.getNode(nodepath);
+		if (node==null) {
+			setContent("usermanager_userproperties","");
+			return;
+		}
 		
 		// test is we can track changes in smithers.
 		usernode = node; 
@@ -155,8 +159,11 @@ public class UsermanagerComponent extends BasicComponent implements MargeObserve
 					System.out.println("Barney interface = "+barney);			
 					String result = barney.put("setpassword("+getApplication().getDomain()+","+user+")", value, null);
 					Fs.setProperty(path, name, "$shadow");
-				} else {
-					Fs.setProperty(path, name, value);
+				}
+			} else {
+				ServiceInterface barney = ServiceManager.getService("barney");
+				if (barney!=null) {
+					Fs.setProperty(path, name, value);	
 				}
 			}
 		}

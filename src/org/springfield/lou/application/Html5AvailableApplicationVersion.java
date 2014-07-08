@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Html5AvailableApplicationVersion
@@ -76,33 +78,43 @@ public class Html5AvailableApplicationVersion implements Comparable<Html5Availab
 	}
 	
 	public void setDevelopmentState(Boolean b) {
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return;
+		
 		if (b==development) return; // was already correct state
 		String basepath = "/domain/internal/service/lou/apps/"+app.getId()+"/development";
 		if (b==false) {
 			// want to turn it off need to remove symlink
-			LazyHomer.sendRequestBart("DELETE",basepath,null,null);
+			smithers.delete(basepath,null,null);
+			//LazyHomer.sendRequestBart("DELETE",basepath,null,null);
 		} else {
 			// want to turn it on need to symlink it
 			String postpath = basepath+"/"+id;
 			String newpath = "/domain/internal/service/lou/apps/"+app.getId()+"/versions/"+id;
 			String newbody = "<fsxml><attributes><referid>"+newpath+"</referid></attributes></fsxml>"; 
-			LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
+			smithers.put(postpath+"/attributes",newbody,"text/xml");
+			//LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
 		}
 		development = b;
 	}
 	
 	public void setProductionState(Boolean b) {
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return;
+		
 		if (b==production) return; // was already correct state
 		String basepath = "/domain/internal/service/lou/apps/"+app.getId()+"/production";
 		if (b==false) {
 			// want to turn it off need to remove symlink
-			LazyHomer.sendRequestBart("DELETE",basepath,null,null);
+			smithers.delete(basepath,null,null);
+			//LazyHomer.sendRequestBart("DELETE",basepath,null,null);
 		} else {
 			// want to turn it on need to symlink it
 			String postpath = basepath+"/"+id;
 			String newpath = "/domain/internal/service/lou/apps/"+app.getId()+"/versions/"+id;
 			String newbody = "<fsxml><attributes><referid>"+newpath+"</referid></attributes></fsxml>"; 
-			LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
+			//LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
+			smithers.put(postpath+"/attributes",newbody,"text/xml");
 		}
 		production = b;
 	}

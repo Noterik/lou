@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Html5AvailableApplication
@@ -106,7 +108,10 @@ public class Html5AvailableApplication {
 		if (v!=null) {
 			String basepath = "/domain/internal/service/lou/apps/"+getId()+"/versions/"+version;
 			System.out.println("DELETE VERSION URL="+basepath);
-			LazyHomer.sendRequestBart("DELETE",basepath,null,null);
+			ServiceInterface smithers = ServiceManager.getService("smithers");
+			if (smithers==null) return false;
+			smithers.delete(basepath,null,null);
+			//LazyHomer.sendRequestBart("DELETE",basepath,null,null);
 			versions.remove(v.getId());	
 		}
 		return true;
@@ -133,7 +138,9 @@ public class Html5AvailableApplication {
 	
 	public void setAutoDeploy(String mode) {
 		String postpath="/domain/internal/service/lou/apps/"+getId()+"/properties/autodeploy";
-		LazyHomer.sendRequestBart("PUT",postpath,mode,"text/xml");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		smithers.put(postpath,mode,"text/xml");
+		//LazyHomer.sendRequestBart("PUT",postpath,mode,"text/xml");
 		autodeploy = mode;
 	}
 	

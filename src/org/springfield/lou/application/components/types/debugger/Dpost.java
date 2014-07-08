@@ -26,6 +26,8 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Dpost command for filesystem debugger
@@ -38,6 +40,7 @@ import org.springfield.lou.homer.LazyHomer;
 public class Dpost {
 
 	public static void execute(List<String> buffer,String currentpath,String[] params) {
+		
 		String oldpath = currentpath;
 		buffer.add("> dpost "+currentpath);	
 		// check if its ok
@@ -47,7 +50,9 @@ public class Dpost {
 		body+="<virtualpath>videoplaylist/tagging</virtualpath>";
 		body+="</properties>";
 		body+="</fsxml>";
-		String nodes = LazyHomer.sendRequestBart("POST",currentpath,body,"text/xml");
+		
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		String nodes = smithers.post(currentpath,body,"text/xml");
 		
 	 	try { 
 			Document result = DocumentHelper.parseText(nodes);

@@ -39,6 +39,8 @@ import org.apache.log4j.*;
 import org.dom4j.*;
 import org.springfield.lou.*;
 import org.springfield.mojo.http.HttpHelper;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * LazyHomer registers this service and holds the
@@ -177,8 +179,11 @@ public class LazyHomer implements MargeObserver {
 	//	System.out.println("MYIP="+myip+" SM="+selectedsmithers);
 
 		String xml = "<fsxml><properties><depth>1</depth></properties></fsxml>";
-		String nodes = LazyHomer.sendRequest("GET","/domain/internal/service/lou/nodes",xml,"text/xml");
-
+		//String nodes = LazyHomer.sendRequest("GET","/domain/internal/service/lou/nodes",xml,"text/xml");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return false;
+		String nodes = smithers.get("/domain/internal/service/lou/nodes",xml,"text/xml");
+		
 		boolean iamok = false;
 
 		try { 
@@ -252,9 +257,8 @@ public class LazyHomer implements MargeObserver {
 		        		newbody+="<defaultloglevel>info</defaultloglevel>";
 		        	}
 		        	newbody+="</properties></nodes></fsxml>";	
-		        	System.out.println("CREATING NEW LOU NODE");
-					String result2 = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/properties",newbody,"text/xml");
-					System.out.println("RESULT="+result2);
+					//String result2 = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/properties",newbody,"text/xml");
+		        	smithers.put("/domain/internal/service/lou/properties",newbody,"text/xml");
 				}
 			}
 		} catch (Exception e) {
@@ -266,11 +270,11 @@ public class LazyHomer implements MargeObserver {
 
 	public static void setLastSeen() {
 		Long value = new Date().getTime();
-		LazyHomer.sendRequest("PUT", "/domain/internal/service/lou/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return;
+		String nodes = smithers.get("/domain/internal/service/lou/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
+		//LazyHomer.sendRequest("PUT", "/domain/internal/service/lou/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
 		
-		// memory update 27apr2014
-	//	Runtime runtime = Runtime.getRuntime();
-	//	System.out.println("USED MEM="+((runtime.totalMemory() - runtime.freeMemory()) / (1024*1024)));
 	}
 	
 	public static void send(String method, String uri) {
@@ -371,7 +375,7 @@ public class LazyHomer implements MargeObserver {
 		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
  	}
 
-	public static String sendRequest(String method,String url,String body,String contentType) {
+	public static String sndRequest(String method,String url,String body,String contentType) {
 
 	//public synchronized static String sendRequest(String method,String url,String body,String contentType) {
 		String fullurl = getSmithersUrl()+url;
@@ -422,7 +426,7 @@ public class LazyHomer implements MargeObserver {
 		return result;
 	}
 
-	public static String sendRequestBart(String method,String url,String body,String contentType) {
+	public static String sendRequestBrt(String method,String url,String body,String contentType) {
 
 	//public synchronized static String sendRequestBart(String method,String url,String body,String contentType) {
 		String fullurl = getBartUrl()+url;
@@ -513,11 +517,16 @@ public class LazyHomer implements MargeObserver {
 		}
 		
 		if (winner!=selectedsmithers) {
-			LazyHomer.sendRequest("PUT", "/domain/internal/service/lou/nodes/"+myip+"/properties/activesmithers", winner.getIpNumber(), "text/xml");
-			if (selectedsmithers==null) {
-				LOG.info("changed to "+winner.getIpNumber()+" prefered="+pref);
-			} else {
-				LOG.info("changed from "+selectedsmithers.getIpNumber()+" to "+winner.getIpNumber()+" prefered="+pref);
+			ServiceInterface sm = ServiceManager.getService("smithers");
+			if (sm==null) {
+				sm.put("/domain/internal/service/lou/nodes/"+myip+"/properties/activesmithers", winner.getIpNumber(), "text/xml");
+			//	LazyHomer.sendRequest("PUT", "/domain/internal/service/lou/nodes/"+myip+"/properties/activesmithers", winner.getIpNumber(), "text/xml");
+				
+				if (selectedsmithers==null) {
+					LOG.info("changed to "+winner.getIpNumber()+" prefered="+pref);
+				} else {
+					LOG.info("changed from "+selectedsmithers.getIpNumber()+" to "+winner.getIpNumber()+" prefered="+pref);
+				}
 			}
 		}
 		selectedsmithers = winner;

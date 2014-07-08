@@ -24,7 +24,7 @@ package org.springfield.lou.application.components.types.debugger;
 import java.io.File;
 import java.util.List;
 
-import org.springfield.lou.fs.Fs;
+import org.springfield.fs.Fs;
 import org.springfield.lou.homer.LazyHomer;
 
 /**
@@ -37,7 +37,9 @@ import org.springfield.lou.homer.LazyHomer;
  */
 public class Load {
 	public static void execute(List<String> buffer, String currentpath,String[] params) {
-		System.out.println("LOAD CALLED");
+		buffer.add("> not ported yet ");	
+		return;
+		/*
 		if (params.length==3) {
 			String wantedpath = params[1];
 			String savecode = params[2];
@@ -58,6 +60,7 @@ public class Load {
 		} else {
 			buffer.add("> missing params need nodepath (starting with /domain) and savecode");
 		}
+		*/
 	}
 	
 	private static String checkPaths(String currentpath,String wantedpath) {

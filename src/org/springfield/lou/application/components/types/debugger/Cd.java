@@ -26,6 +26,8 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Cd command for filesystem debugger
@@ -55,7 +57,15 @@ public class Cd {
 			buffer.add("> cd "+currentpath);	
 			// check if its ok
 			String xml = "<fsxml><properties><depth>0</depth></properties></fsxml>";
-			String nodes = LazyHomer.sendRequestBart("GET",currentpath,xml,"text/xml");
+			//String nodes = LazyHomer.sendRequestBart("GET",currentpath,xml,"text/xml");
+			
+			ServiceInterface smithers = ServiceManager.getService("smithers");
+			if (smithers==null) {
+				buffer.add("> Error smithers down");
+				return currentpath;
+			}
+			String nodes = smithers.get(currentpath,xml,"text/xml");
+			
 	 		try { 
 				Document result = DocumentHelper.parseText(nodes);
 				if (result.asXML().indexOf("<message>No data available</message>")!=-1 || result.asXML().indexOf("<totalResultsReturned>0</totalResultsReturned></properties>")!=-1) {
