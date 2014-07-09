@@ -39,7 +39,7 @@ import org.springfield.lou.application.components.types.OpenappsComponent;
 import org.springfield.lou.application.types.DashboardApplication;
 import org.springfield.fs.*;
 import org.springfield.lou.homer.LazyHomer;
-import org.springfield.lou.maggie.MaggieLoader;
+// org.springfield.lou.maggie.MaggieLoader;
 import org.springfield.mojo.interfaces.ServiceInterface;
 import org.springfield.mojo.interfaces.ServiceManager;
 
@@ -69,7 +69,7 @@ public class ApplicationManager extends Thread {
 			running = true;
 			if (availableapps==null) loadAvailableApps(); // new test for urlmapping
 			start();
-            new MaggieLoader();
+           // new MaggieLoader();
 
 		}
     }
@@ -275,7 +275,8 @@ public class ApplicationManager extends Thread {
 	        	
 	        	ServiceInterface smithers = ServiceManager.getService("smithers");
 	        	if (smithers==null) return; 
-				smithers.get("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
+				smithers.put("/domain/internal/service/lou/apps/"+appname+"/properties",newbody,"text/xml");
+	        	smithers.put("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
 
 	        	//String result = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
     			//System.out.println("RESULTD="+result);

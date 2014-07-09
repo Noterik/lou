@@ -67,17 +67,17 @@ public class Cat {
 			buffer.add("> cat "+name);
 			String xml = "<fsxml><properties><depth>0</depth></properties></fsxml>";
 			ServiceInterface smithers = ServiceManager.getService("smithers");
-			if (smithers==null) {
+			if (smithers!=null) {
 				String nodes = smithers.get(currentpath+name,xml,"text/xml");
 				List<String> dirs = new ArrayList<String>();
 				try { 
 					Document result = DocumentHelper.parseText(nodes);
-					//System.out.println("R="+result.asXML());
+					System.out.println("R="+result.asXML());
 					String value = result.getRootElement().getText();
 				//System.out.println("V="+value+" r="+result.getRootElement().getName());
 					buffer.add(value);
 				} catch(Exception e) {
-				
+					e.printStackTrace();
 				}
 			}
 		}

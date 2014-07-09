@@ -32,7 +32,7 @@ import org.springfield.lou.application.ApplicationManager;
 import org.springfield.lou.application.Html5ApplicationInterface;
 import org.springfield.lou.application.components.BasicComponent;
 import org.springfield.fs.*;
-import org.springfield.lou.maggie.MaggieLoader;
+//import org.springfield.lou.maggie.MaggieLoader;
 import org.springfield.lou.screen.Screen;
 import org.springfield.lou.screen.ScreenManager;
 

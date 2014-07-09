@@ -86,6 +86,7 @@
 		<copy todir="${local.dir}/WEB-INF/lib/">
 			<fileset dir="${lib.dir}" includes="**/*.jar">
 				<exclude name="jsp-api.jar"/>
+				<exclude name="mojo.jar"/>
 				<exclude name="servlet.jar"/>
 				<exclude name="servlet-api.jar"/>
 			</fileset>
