@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.springfield.fs.Fs;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.mojo.interfaces.ServiceInterface;
 import org.springfield.mojo.interfaces.ServiceManager;
@@ -137,11 +138,15 @@ public class Html5AvailableApplication {
 	}
 	
 	public void setAutoDeploy(String mode) {
-		String postpath="/domain/internal/service/lou/apps/"+getId()+"/properties/autodeploy";
-		ServiceInterface smithers = ServiceManager.getService("smithers");
-		smithers.put(postpath,mode,"text/xml");
-		//LazyHomer.sendRequestBart("PUT",postpath,mode,"text/xml");
 		autodeploy = mode;
+		String path = "/domain/internal/service/lou/apps/"+getId();
+		Fs.setProperty(path,"autodeploy",mode);
+		
+		//String postpath="/domain/internal/service/lou/apps/"+getId()+"/properties/autodeploy";
+		//ServiceInterface smithers = ServiceManager.getService("smithers");
+		//smithers.put(postpath,mode,"text/xml");
+		//LazyHomer.sendRequestBart("PUT",postpath,mode,"text/xml");
+		//autodeploy = mode;
 	}
 	
 	public String getAutoDeploy() {

@@ -166,9 +166,11 @@ public class ApplicationManager extends Thread {
     	return availableapps.get(name);
     }
     
+    
     public Map<String, Html5ApplicationInterface> getRouter(){
     	return this.router;
-    }    
+    } 
+       
     
     public Map<String, Html5ApplicationInterface> getApplications(){
     	return runningapps;
@@ -275,7 +277,10 @@ public class ApplicationManager extends Thread {
 	        	
 	        	ServiceInterface smithers = ServiceManager.getService("smithers");
 	        	if (smithers==null) return; 
-				smithers.put("/domain/internal/service/lou/apps/"+appname+"/properties",newbody,"text/xml");
+	        	FsNode tnode = Fs.getNode("/domain/internal/service/lou/apps/"+appname);
+	        	if (tnode==null) {
+	        		smithers.put("/domain/internal/service/lou/apps/"+appname+"/properties",newbody,"text/xml");
+	        	}
 	        	smithers.put("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
 
 	        	//String result = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
