@@ -141,12 +141,6 @@ public class Html5AvailableApplication {
 		autodeploy = mode;
 		String path = "/domain/internal/service/lou/apps/"+getId();
 		Fs.setProperty(path,"autodeploy",mode);
-		
-		//String postpath="/domain/internal/service/lou/apps/"+getId()+"/properties/autodeploy";
-		//ServiceInterface smithers = ServiceManager.getService("smithers");
-		//smithers.put(postpath,mode,"text/xml");
-		//LazyHomer.sendRequestBart("PUT",postpath,mode,"text/xml");
-		//autodeploy = mode;
 	}
 	
 	public String getAutoDeploy() {

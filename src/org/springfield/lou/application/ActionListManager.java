@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.plaf.basic.BasicSliderUI.ActionScroller;
+
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.screen.Screen;
 import org.springfield.lou.servlet.LouServlet;
@@ -24,16 +26,18 @@ public class ActionListManager {
         if (pos!=-1) {
             String content = name.substring(pos+1,name.length()-1);
             name = name.substring(0,pos);
-    			//System.out.println("execute action list "+name+" on "+app.getId());
     			ActionList maf = actionlists.get(name);
     			if (maf!=null) {
     				maf.execute(s,content);
+    			} else {
+    				System.out.println("can't find trigggered action list "+name);
     			}
         } else {
-        		//System.out.println("execute action list "+name+" on "+app.getId());
         		ActionList maf = actionlists.get(name);
         		if (maf!=null) {
         			maf.execute(s);
+    			} else {
+    				System.out.println("can't find trigggered action list "+name);
         		}
         }
 	}
@@ -47,10 +51,8 @@ public class ActionListManager {
 	
 	private void readActionDir(File dir,String actiondir,String prefix) { // will be called recursive
 		String[] files = dir.list();
-		//System.out.println("PREFIX="+prefix);
 		for (int i=0;i<files.length;i++) {
 			String filename = files[i];
-			//System.out.println("ACTION FILE="+filename);
 			File dircheck = new File(actiondir+File.separator+prefix+filename);
 			if (dircheck.isDirectory()) {
 				readActionDir(dircheck,actiondir,prefix+filename+"/");	
@@ -94,10 +96,8 @@ public class ActionListManager {
 	
 	private static void readActionDirForUrlTriggers(File dir,String actiondir,String prefix) { // will be called recursive
 		String[] files = dir.list();
-		//System.out.println("PREFIX="+prefix);
 		for (int i=0;i<files.length;i++) {
 			String filename = files[i];
-			//System.out.println("ACTION FILE="+filename);
 			File dircheck = new File(actiondir+File.separator+prefix+filename);
 			if (dircheck.isDirectory()) {
 				readActionDirForUrlTriggers(dircheck,actiondir,prefix+filename+"/");	
@@ -111,7 +111,12 @@ public class ActionListManager {
 						if (urlmapping.indexOf("seturltrigger")==0) {
 							urlmapping = urlmapping.substring(urlmapping.indexOf("(")+1);
 							urlmapping = urlmapping.substring(0,urlmapping.indexOf(")"));
-							LouServlet.addUrlTrigger(urlmapping,filename.substring(0,filename.length()-4));
+
+							String aname = filename.substring(0,filename.length()-4);
+							if (!prefix.equals("")) {
+								aname = prefix+aname;
+							}
+							LouServlet.addUrlTrigger(urlmapping,aname);
 						}
 						command = br.readLine();
 					}
