@@ -167,10 +167,11 @@ public class ActionList {
     }
 	
     private void handleLog(Screen s,String msg,String level) {
-		FsNode n = new FsNode();
+		FsNode n = new FsNode("log");
 		
 		SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
 		n.setId(f.format(new Date()));
+		
 		n.setProperty("level", level);
 		n.setProperty("source", "maf");
 		n.setProperty("msg", msg);
