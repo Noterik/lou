@@ -787,6 +787,20 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     	return null;
     }
     
+	public boolean checkNodeActions(FsNode node,String actions) {
+    		return checkNodeActions(node,0,actions);
+	}
+    
+	public boolean checkNodeActions(FsNode node,int depth,String actions) {
+    	String asker = this.getClass().getName(); // gets the name from the classloader
+    	int pos = asker.indexOf("org.springfield.lou.application.types.");
+    	if (pos==0) { // make sure we are in the right package
+    		asker = asker.substring(pos+38);
+    		return node.checkActions(asker,"application",depth,actions); 
+    	}
+    	return false;
+	}
+    
     public void log(Screen s,String msg,int level) {
     		FsNode n = new FsNode("log");	
     		SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");

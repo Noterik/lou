@@ -539,6 +539,15 @@ public class Screen {
     	return null;
     }
     
+	public boolean checkNodeActions(FsNode node,String actions) {
+		return checkNodeActions(node,0,actions);
+	}
+    
+	public boolean checkNodeActions(FsNode node,int depth,String actions) {
+		if (this.getUserName()==null) return false; // no user always wromg
+		return node.checkActions(getUserName(),"user",depth,actions); 
+	}
+    
 	
 	public void log(String msg) {
 		app.log(this,msg);
