@@ -42,6 +42,8 @@ import org.springfield.lou.screen.ScreenManager;
 import org.springfield.lou.user.User;
 import org.springfield.lou.user.UserManager;
 import org.springfield.lou.util.NodeObserver;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Html5Application
@@ -759,6 +761,30 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     
     public void log(Screen s,String msg) {
 		log(s,msg,LOG_INFO);
+    }
+    
+    /**
+     * 
+     * adds application id, checks with barney and talks to mojo if allowed
+     * 
+     * @param path
+     * @return
+     */
+    public final FsNode getNode(String path) {
+    	String asker = this.getClass().getName(); // gets the name from the classloader
+    	int pos = asker.indexOf("org.springfield.lou.application.types.");
+    	if (pos==0) { // make sure we are in the right package
+    		asker = asker.substring(pos+38);
+    		System.out.println("getNode "+asker);
+    		ServiceInterface barney = ServiceManager.getService("barney");
+    		if (barney!=null) {
+    			String allowed = barney.get("applicationallowed(read,"+path+",0,"+asker+")",null,null);
+    			if (allowed!=null && allowed.equals("true")) {
+    				return Fs.getNode(path); // so its allowed ask it
+    			}
+    		}
+    	}
+    	return null;
     }
     
     public void log(Screen s,String msg,int level) {

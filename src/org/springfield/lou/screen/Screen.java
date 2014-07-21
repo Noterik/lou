@@ -28,6 +28,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import org.springfield.fs.Fs;
+import org.springfield.fs.FsNode;
 import org.springfield.lou.application.*;
 import org.springfield.lou.application.components.BasicComponent;
 import org.springfield.lou.application.components.ComponentInterface;
@@ -36,6 +38,8 @@ import org.springfield.lou.application.components.types.AvailableappsComponent;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.location.Location;
 import org.springfield.lou.tools.JavascriptInjector;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Screen
@@ -512,6 +516,29 @@ public class Screen {
 		//System.out.println("USERLOGOUT="+name);
 		app.onLogoutUser(this, name);
 	}
+	
+    /**
+     * 
+     * adds application id, checks with barney and talks to mojo if allowed
+     * 
+     * @param path
+     * @return
+     */
+    public final FsNode getNode(String path) {
+    	String asker = this.getUserName(); // gets the use name
+    	if (asker!=null && !asker.equals("")) {
+    		System.out.println("screen getNode "+asker);
+    		ServiceInterface barney = ServiceManager.getService("barney");
+    		if (barney!=null) {
+    			String allowed = barney.get("userallowed(read,"+path+",0,"+asker+")",null,null);
+    			if (allowed!=null && allowed.equals("true")) {
+    				return Fs.getNode(path); // so its allowed ask it
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
 	
 	public void log(String msg) {
 		app.log(this,msg);

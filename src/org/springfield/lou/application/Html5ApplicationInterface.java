@@ -23,7 +23,6 @@ package org.springfield.lou.application;
 
 import java.util.Map;
 
-
 import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.components.ComponentManager;
 import org.springfield.lou.screen.*;
@@ -81,4 +80,5 @@ public interface Html5ApplicationInterface {
 	public int getExternalInterfaceId();
 	public void subscribe(String node, FSXMLStrainer strainer);
 	public void unsubscribe(String node);
+	public FsNode getNode(String path);
 }
