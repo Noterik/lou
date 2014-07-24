@@ -37,10 +37,11 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.springfield.lou.application.components.types.OpenappsComponent;
 import org.springfield.lou.application.types.DashboardApplication;
-import org.springfield.lou.fs.FSList;
-import org.springfield.lou.fs.FsNode;
+import org.springfield.fs.*;
 import org.springfield.lou.homer.LazyHomer;
-import org.springfield.lou.maggie.MaggieLoader;
+// org.springfield.lou.maggie.MaggieLoader;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Application manager
@@ -66,8 +67,9 @@ public class ApplicationManager extends Thread {
         System.out.println("Application Manager started");
 		if (!running) {
 			running = true;
+			if (availableapps==null) loadAvailableApps(); // new test for urlmapping
 			start();
-            new MaggieLoader();
+           // new MaggieLoader();
 
 		}
     }
@@ -164,9 +166,11 @@ public class ApplicationManager extends Thread {
     	return availableapps.get(name);
     }
     
+    
     public Map<String, Html5ApplicationInterface> getRouter(){
     	return this.router;
-    }    
+    } 
+       
     
     public Map<String, Html5ApplicationInterface> getApplications(){
     	return runningapps;
@@ -271,8 +275,16 @@ public class ApplicationManager extends Thread {
 	    	    Html5AvailableApplication vapp = getAvailableApplication(appname);
 	        	String newbody ="<fsxml><properties></properties></fsxml>";	
 	        	
-				String result = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
-    			System.out.println("RESULTD="+result);
+	        	ServiceInterface smithers = ServiceManager.getService("smithers");
+	        	if (smithers==null) return; 
+	        	FsNode tnode = Fs.getNode("/domain/internal/service/lou/apps/"+appname);
+	        	if (tnode==null) {
+	        		smithers.put("/domain/internal/service/lou/apps/"+appname+"/properties",newbody,"text/xml");
+	        	}
+	        	smithers.put("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
+
+	        	//String result = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
+    			//System.out.println("RESULTD="+result);
     			// make all the dirs we need
     			File md = new File(writedir);
     			md.mkdirs();
@@ -464,14 +476,17 @@ public class ApplicationManager extends Thread {
     }
 
     public void loadAvailableApps() {
-    	System.out.println("ApplicationManager.loadAvailableApps()");
+    	//System.out.println("ApplicationManager.loadAvailableApps()");
     	availableapps = new HashMap<String, Html5AvailableApplication>();
     	String xml = "<fsxml><properties><depth>2</depth></properties></fsxml>";
 		long starttime = new Date().getTime(); // we track the request time for debugging only
-    	String nodes = LazyHomer.sendRequest("GET","/domain/internal/service/lou/apps",xml,"text/xml");
-    	System.out.println("APP NODECOUNT="+nodes.length());
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return;
+		
+    	String nodes = smithers.get("/domain/internal/service/lou/apps",xml,"text/xml");
+    	//System.out.println("APP NODECOUNT="+nodes.length());
 		long endtime = new Date().getTime(); // we track the request time for debugging only
-		System.out.println("SMITHERSTIME="+(endtime-starttime));
+		//System.out.println("SMITHERSTIME="+(endtime-starttime));
 		try { 
 			Document result = DocumentHelper.parseText(nodes);
 			for(Iterator<Node> iter = result.getRootElement().nodeIterator(); iter.hasNext(); ) {
@@ -529,7 +544,13 @@ public class ApplicationManager extends Thread {
 							// ok lets set prod/dev version
 							if (production!=null) {
 								Html5AvailableApplicationVersion pv = vapp.getVersionByUrl(production);
-								if (pv!=null) pv.setProductionState(true);
+								if (pv!=null) {
+									pv.setProductionState(true);
+									// lets scan for triggers !
+									String scanpath="/springfield/lou/apps/"+vapp.getId()+"/"+pv.getId()+"/actionlists/";
+									//System.out.println("ACTIONLIST PRESCANNER="+scanpath);
+									ActionListManager.readActionListsDirForUrlTriggers(scanpath);
+								}
 							}
 							//System.out.println("N5.2");
 							if (development!=null) {
@@ -559,7 +580,6 @@ public class ApplicationManager extends Thread {
 								vv.addNode(ipnumber);
 							}
 						}
-						
 					}
 				}
 			}
@@ -571,7 +591,7 @@ public class ApplicationManager extends Thread {
     		System.out.println("NO APPS FOUND RETURNING NULL");
     		availableapps=null;
     	}
-    	System.out.println("END OF LOADAVAIL");
+    	//System.out.println("END OF LOADAVAIL");
      }
     
     private byte[] readJarEntryToBytes(InputStream is) {  

@@ -27,6 +27,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Mkdir command for filesystem debugger
@@ -42,7 +44,16 @@ public class Mkdir {
 		
 		// find out what type of node we are ?
 		String xml = "<fsxml><properties><depth>0</depth></properties></fsxml>";
-		String nodes = LazyHomer.sendRequestBart("GET",currentpath,xml,"text/xml");
+		//String nodes = LazyHomer.sendRequestBart("GET",currentpath,xml,"text/xml");
+		
+		
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) {
+			buffer.add("> Error smithers down");
+			return;
+		}
+		String nodes = smithers.get(currentpath,xml,"text/xml");
+		
  		try { 
 			Document result = DocumentHelper.parseText(nodes);
 			String lastid = currentpath.substring(0,currentpath.length()-1);
@@ -51,12 +62,15 @@ public class Mkdir {
 			if (node!=null) {
 				String newbody = "<fsxml><properties></properties></fsxml>";
 		    	String postpath = currentpath+params[1]+"/properties";
-				LazyHomer.sendRequest("PUT",postpath,newbody,"text/xml");
+				//LazyHomer.sendRequest("PUT",postpath,newbody,"text/xml");
+				smithers.put(postpath,newbody,"text/xml");
 			} else {
 				String newbody = "<fsxml>";
 		    	newbody+="<"+params[1]+"><properties>";	
-		    	newbody+="</properties></"+params[1]+"></fsxml>";
-				LazyHomer.sendRequest("PUT",currentpath+"properties",newbody,"text/xml");
+		    	newbody+="</properties></"+params[1]+"></fsxml>";		    	
+		    	
+				//LazyHomer.sendRequest("PUT",currentpath+"properties",newbody,"text/xml");
+		    	smithers.put(currentpath+"properties",newbody,"text/xml");
 			}
 			buffer.add("> mkdir "+params[1]);
  		} catch(Exception e) {

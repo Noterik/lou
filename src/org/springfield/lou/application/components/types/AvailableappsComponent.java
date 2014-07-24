@@ -55,7 +55,7 @@ public class AvailableappsComponent extends BasicComponent {
 		Iterator<String> it = keys.iterator();
 		while(it.hasNext()){
 			String next = (String) it.next();
-			System.out.println("APPNAME="+next);
+			//System.out.println("APPNAME="+next);
 			Html5AvailableApplication vapp = ApplicationManager.instance().getAvailableApplication(next);
 			body +="<tr><td>"+vapp.getId()+"</td>";
 			body +="<td>"+vapp.getVersionsCount()+"</td>";
@@ -78,7 +78,7 @@ public class AvailableappsComponent extends BasicComponent {
 		setContent("appdetails","loading");
 		long starttime = new Date().getTime(); // we track the request time for debugging only
 		ApplicationManager.instance().loadAvailableApps();
-		System.out.println("UPDATE DETAIL CALLED "+appid);
+		//System.out.println("UPDATE DETAIL CALLED "+appid);
 		long endtime = new Date().getTime();
 		StringBuffer body = new StringBuffer();
 		body.append("<div id=\"appdetails_content\"><br /><br />Application details for : "+appid+"<br /><table align=\"center\" width=\"50%\">");
@@ -128,7 +128,7 @@ public class AvailableappsComponent extends BasicComponent {
 		body.append("</table></div>");
 		setContent("appdetails",body.toString());
 		//long endtime = new Date().getTime();
-		System.out.println("QUERYTIME="+(endtime-starttime));
+		//System.out.println("QUERYTIME="+(endtime-starttime));
 	}
 
 	public void put(String from,String msg) {

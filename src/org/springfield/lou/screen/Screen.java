@@ -28,6 +28,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import org.springfield.fs.Fs;
+import org.springfield.fs.FsNode;
 import org.springfield.lou.application.*;
 import org.springfield.lou.application.components.BasicComponent;
 import org.springfield.lou.application.components.ComponentInterface;
@@ -36,6 +38,8 @@ import org.springfield.lou.application.components.types.AvailableappsComponent;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.location.Location;
 import org.springfield.lou.tools.JavascriptInjector;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Screen
@@ -83,7 +87,6 @@ public class Screen {
 	}
 	
 	public String getParameter(String name) {
-		if (params==null) System.out.println("PARAMS NOT SET");
 		String[] values = params.get(name);
 		if (values!=null) {
 			return values[0];
@@ -180,7 +183,6 @@ public class Screen {
 	 * @param data the data to be sent
 	 */
 	public void addContent(String t,String c){
-		System.out.println("ADD CALLED");
 		if (data==null) {
 			data = "add("+t+")="+c;
 		} else {
@@ -212,7 +214,6 @@ public class Screen {
 	}
 	
 	public void removeContent(String t){
-		System.out.println("REMOVE="+t);
 		removeContent(t, false, getApplication());
 	}
 	
@@ -264,7 +265,7 @@ public class Screen {
 	
 	public void loadStyleSheet(String style, Html5ApplicationInterface app) {
 		//TODO: make this at least windows compatible or configurable
-		System.out.println("Screen.loadStyleSheet(" + style + ", " + app + ")");
+		//System.out.println("Screen.loadStyleSheet(" + style + ", " + app + ")");
 		String stylepath ="/springfield/tomcat/webapps/ROOT/eddie/"+style;
 		
 		String packagepath = app.getHtmlPath();
@@ -502,7 +503,7 @@ public class Screen {
 	
 	public void onNewUser(String name) {
 		username = name;
-		System.out.println("onNewUser="+name);
+		//System.out.println("onNewUser="+name);
 		app.onNewUser(this, name);
 	}
 	
@@ -512,9 +513,41 @@ public class Screen {
 	
 	public void onLogoutUser(String name) {
 		username = null;
-		System.out.println("USERLOGOUT="+name);
+		//System.out.println("USERLOGOUT="+name);
 		app.onLogoutUser(this, name);
 	}
+	
+    /**
+     * 
+     * adds application id, checks with barney and talks to mojo if allowed
+     * 
+     * @param path
+     * @return
+     */
+    public final FsNode getNode(String path) {
+    	String asker = this.getUserName(); // gets the use name
+    	if (asker!=null && !asker.equals("")) {
+    		System.out.println("screen getNode "+asker);
+    		ServiceInterface barney = ServiceManager.getService("barney");
+    		if (barney!=null) {
+    			String allowed = barney.get("userallowed(read,"+path+",0,"+asker+")",null,null);
+    			if (allowed!=null && allowed.equals("true")) {
+    				return Fs.getNode(path); // so its allowed ask it
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+	public boolean checkNodeActions(FsNode node,String actions) {
+		return checkNodeActions(node,0,actions);
+	}
+    
+	public boolean checkNodeActions(FsNode node,int depth,String actions) {
+		if (this.getUserName()==null) return false; // no user always wromg
+		return node.checkActions(getUserName(),"user",depth,actions); 
+	}
+    
 	
 	public void log(String msg) {
 		app.log(this,msg);

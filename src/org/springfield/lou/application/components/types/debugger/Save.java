@@ -35,7 +35,10 @@ import org.springfield.lou.homer.LazyHomer;
  */
 public class Save {
 	public static void execute(List<String> buffer, String currentpath,String[] params) {
-		System.out.println("SAVE CALLED");
+		buffer.add("> not ported yet");
+		return;
+		
+		/*
 		if (params.length==3) {
 			String wantednode = params[1];
 			String savecode = params[2];
@@ -52,5 +55,6 @@ public class Save {
 		} else {
 			buffer.add("> missing params need nodename and savecode");
 		}
+		*/
 	}
 }

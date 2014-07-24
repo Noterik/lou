@@ -32,9 +32,7 @@ import java.util.Set;
 import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.components.ComponentManager;
 import org.springfield.lou.application.components.types.proxy.RemoteProxy;
-import org.springfield.lou.fs.FSXMLStrainer;
-import org.springfield.lou.fs.FsNode;
-import org.springfield.lou.fs.NodeObserver;
+import org.springfield.fs.*;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.location.Location;
 import org.springfield.lou.location.LocationManager;
@@ -43,6 +41,9 @@ import org.springfield.lou.screen.Screen;
 import org.springfield.lou.screen.ScreenManager;
 import org.springfield.lou.user.User;
 import org.springfield.lou.user.UserManager;
+import org.springfield.lou.util.NodeObserver;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Html5Application
@@ -271,7 +272,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			Screen screen = this.screenmanager.get(next);
 			//System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
 			if ((new Date().getTime()-screen.getLastSeen()>12000)) {
-				System.out.println("PERFORM TIMEOUT ON="+screen.getId());
+				//System.out.println("PERFORM TIMEOUT ON="+screen.getId());
 				String username = screen.getUserName();
 				this.onLogoutUser(screen,username);
 			    it.remove(); // avoids a ConcurrentModificationException
@@ -728,12 +729,12 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     
     
     private void eddieLog(Screen s,String content) {
-    	  	String[] parts = content.split(",");
-    	  	String l = parts[1];
-    	  	int level = LOG_INFO; // default to info
-    	  	if (l.equals("warning")) { level = LOG_WARNING; }
-    	  	else if (l.equals("error")) { level = LOG_ERROR; }
-    	  	FsNode n = new FsNode();	
+    	String[] parts = content.split(",");
+    	String l = parts[1];
+    	int level = LOG_INFO; // default to info
+    	if (l.equals("warning")) { level = LOG_WARNING; }
+    	else if (l.equals("error")) { level = LOG_ERROR; }
+    	FsNode n = new FsNode("log");	
   		SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
   		n.setId(f.format(new Date()));
   		n.setProperty("level", loglevels[level-1]);
@@ -762,8 +763,46 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		log(s,msg,LOG_INFO);
     }
     
+    /**
+     * 
+     * adds application id, checks with barney and talks to mojo if allowed
+     * 
+     * @param path
+     * @return
+     */
+    public final FsNode getNode(String path) {
+    	String asker = this.getClass().getName(); // gets the name from the classloader
+    	int pos = asker.indexOf("org.springfield.lou.application.types.");
+    	if (pos==0) { // make sure we are in the right package
+    		asker = asker.substring(pos+38);
+    		System.out.println("getNode "+asker);
+    		ServiceInterface barney = ServiceManager.getService("barney");
+    		if (barney!=null) {
+    			String allowed = barney.get("applicationallowed(read,"+path+",0,"+asker+")",null,null);
+    			if (allowed!=null && allowed.equals("true")) {
+    				return Fs.getNode(path); // so its allowed ask it
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+	public boolean checkNodeActions(FsNode node,String actions) {
+    		return checkNodeActions(node,0,actions);
+	}
+    
+	public boolean checkNodeActions(FsNode node,int depth,String actions) {
+    	String asker = this.getClass().getName(); // gets the name from the classloader
+    	int pos = asker.indexOf("org.springfield.lou.application.types.");
+    	if (pos==0) { // make sure we are in the right package
+    		asker = asker.substring(pos+38);
+    		return node.checkActions(asker,"application",depth,actions); 
+    	}
+    	return false;
+	}
+    
     public void log(Screen s,String msg,int level) {
-    		FsNode n = new FsNode();	
+    		FsNode n = new FsNode("log");	
     		SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
     		n.setId(f.format(new Date()));
     		n.setProperty("level", loglevels[level-1]);

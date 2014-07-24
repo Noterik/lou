@@ -38,10 +38,12 @@ public class ScreenManager {
     }
     
     public void put(Screen s) {
+    	//System.out.println("ADD SCREEN="+s.getId());
     	this.openscreens.put(s.getId(),s);
     }
     
     public void remove(String id){
+    	//System.out.println("REMOVE SCREEN="+id);
     	this.openscreens.remove(id);
     }
     

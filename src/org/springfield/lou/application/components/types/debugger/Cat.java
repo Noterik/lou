@@ -27,6 +27,8 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Cat command for filesystem debugger
@@ -49,7 +51,14 @@ public class Cat {
 		if (recursive) {
 			buffer.add("> cat -r "+params[2]);
 			String xml = "<fsxml><properties><depth>0</depth></properties></fsxml>";
-			String result = LazyHomer.sendRequestBart("GET",currentpath+name,xml,"text/xml");
+			//String result = LazyHomer.sendRequestBart("GET",currentpath+name,xml,"text/xml");
+			ServiceInterface smithers = ServiceManager.getService("smithers");
+			if (smithers==null) {
+				buffer.add("> Error smithers down");
+				return;
+			}
+			String result = smithers.get(currentpath+name,xml,"text/xml");
+			
 			String[] lines = result.split(">");
 			for (int i=0;i<lines.length;i++) {
 				buffer.add(lines[i]+">");
@@ -57,16 +66,19 @@ public class Cat {
 		} else {
 			buffer.add("> cat "+name);
 			String xml = "<fsxml><properties><depth>0</depth></properties></fsxml>";
-			String nodes = LazyHomer.sendRequestBart("GET",currentpath+name,xml,"text/xml");
-			List<String> dirs = new ArrayList<String>();
-	 		try { 
-				Document result = DocumentHelper.parseText(nodes);
-				//System.out.println("R="+result.asXML());
-				String value = result.getRootElement().getText();
+			ServiceInterface smithers = ServiceManager.getService("smithers");
+			if (smithers!=null) {
+				String nodes = smithers.get(currentpath+name,xml,"text/xml");
+				List<String> dirs = new ArrayList<String>();
+				try { 
+					Document result = DocumentHelper.parseText(nodes);
+					System.out.println("R="+result.asXML());
+					String value = result.getRootElement().getText();
 				//System.out.println("V="+value+" r="+result.getRootElement().getName());
-				buffer.add(value);
-	 		} catch(Exception e) {
-				
+					buffer.add(value);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -24,6 +24,8 @@ package org.springfield.lou.application.components.types.debugger;
 import java.util.List;
 
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * Cp command for filesystem debugger
@@ -36,6 +38,12 @@ import org.springfield.lou.homer.LazyHomer;
 public class Cp {
 	
 	public static void execute(List<String> buffer,String currentpath,String[] params) {
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) {
+			buffer.add("> Error smithers down");
+			return;
+		}
+		
 		Boolean recursive = false;
 		String src = params[1];
 		String dest = params[2];
@@ -65,7 +73,8 @@ public class Cp {
 		body+="</properties>";
 		body+="</fsxml>";
 		System.out.println("BODY2="+body);
-		String result = LazyHomer.sendRequestBart("POST",currentpath,body,"text/xml");
+		//String result = LazyHomer.sendRequestBart("POST",currentpath,body,"text/xml");
+		String result = smithers.post(currentpath,body,"application/fscommand");
 		System.out.println("R="+result);		
 	}	
 }

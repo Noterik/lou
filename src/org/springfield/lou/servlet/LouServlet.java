@@ -107,7 +107,6 @@ public class LouServlet extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
 		String body = request.getRequestURI();
-		System.out.println("INCOMMING!! REQUEST IS="+body);
 		if(request.getParameter("method")!=null) {
 			if(request.getParameter("method").equals("post")){
 				System.out.println("going for post");
@@ -116,12 +115,8 @@ public class LouServlet extends HttpServlet {
 			}
 		}
 		
-		//String body = request.getRequestURI();
-		//System.out.println("INCOMMING REQUEST IS="+body);
-		
 		// need to move to be faster
 		String params = request.getQueryString();
-		System.out.println("PARAMS1="+params);
 		String[] paths = urlMappingPerApplication(request,body);
 		if (paths!=null) {
 			body = paths[0];

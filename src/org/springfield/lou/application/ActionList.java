@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.springfield.lou.fs.FsNode;
+import org.springfield.fs.FsNode;
 import org.springfield.lou.screen.Capabilities;
 import org.springfield.lou.screen.Screen;
 
@@ -49,7 +49,6 @@ public class ActionList {
 			if (whenvalid) {
 				for (int i=0;i<cmds.size();i++) {
 					String[] cmd = cmds.get(i);
-					//System.out.println("EXECUTE COMMAND "+j+" "+i+" = "+cmd[0]);
 					String action = cmd[0].toLowerCase();
 					if (action.equals("addreferid"))	{ handleAddReferid(cmd[1],cmd[2]); }
 					else if (action.equals("loadstylesheet"))	{ handleLoadStyleSheet(s,cmd[1],cmd[2]); }
@@ -90,7 +89,6 @@ public class ActionList {
 				if (value.equals("aphone") && cap.getDeviceMode()==cap.MODE_APHONE_LANDSCAPE) return true;
 				if (value.equals("aphone") && cap.getDeviceMode()==cap.MODE_APHONE_PORTRAIT) return true;
 			}
-			//System.out.println("DEVICE="+cap.getDeviceMode()+" "+cap.getDeviceModeName());
 		}
 		return false;
 	}
@@ -169,10 +167,11 @@ public class ActionList {
     }
 	
     private void handleLog(Screen s,String msg,String level) {
-		FsNode n = new FsNode();
+		FsNode n = new FsNode("log");
 		
 		SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
 		n.setId(f.format(new Date()));
+		
 		n.setProperty("level", level);
 		n.setProperty("source", "maf");
 		n.setProperty("msg", msg);

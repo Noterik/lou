@@ -1,0 +1,250 @@
+body {
+	background-color: #F7F0DC;
+	color: #ffffff;
+}
+
+table,
+td,
+th {
+  border: solid 1px silver;
+  color:#666;
+  padding:5px;
+  font-size:12pt;
+  text-align: center;
+  }
+table {
+  border-collapse:collapse;
+  }
+table tr {
+  background-color:#eee;
+  }
+
+table td, table th{
+    border:1px solid #fff;
+    }
+    
+ th {
+  background-color:#336;
+  color:#fff;
+  }
+
+td.off { background: #eee;}
+td.on { background: #bbb;}
+
+#notification {
+	background-color:#000000;
+	border: 2px solid #dddddd;
+	border-radius: 10px;
+	color: #ffffff;
+	padding: 4px 10px 1px 10px;
+	font-size : 18px;
+	font-style : bold;
+	position:absolute;
+	height:30px;
+	top: -40px;
+	right: 30px;
+	opacity: 0.8;
+}
+
+#lou {
+	position:absolute;
+	left:5px;
+	top:5px;
+}
+
+#qrcode {
+	background-color: white;
+	position:absolute;
+	right:20px;
+	top:20px;
+	padding: 0px;
+	border:5px solid white;
+}
+
+#login {
+	color: #ffffff;
+	font-style: bold;
+	background-color: #3c3c5c;
+	position:absolute;
+	right:0px;
+	top:0px;
+	padding: 3px;
+	border:1px solid #444488;
+}
+
+#synctime {
+	color: #ffffff;
+	font-style: bold;
+	background-color: #3c3c5c;
+	position:absolute;
+	left:0px;
+	bottom:0px;
+	padding: 3px;
+	border:1px solid #444488;
+}
+
+#dashboardselector {
+	color: #ffffff;
+	text-align: center;
+	font-style: bold;
+	position:absolute;
+	left : 100px;
+	top:110px;
+	padding: 0px;
+	width: 80%;
+}
+
+
+#feedbackbar {
+	color: #ffffff;
+	text-align: center;
+	font-style: bold;
+	background-color: #3c3c5c;
+	position:absolute;
+	left : 100px;
+	top:80px;
+	padding: 3px;
+	border:1px solid #444488;
+	width: 80%;
+}
+
+
+#opentools {
+	color: black;
+	text-align: center;
+	font-style: bold;
+	position:absolute;
+	left : 100px;
+	top:150px;
+	padding: 3px;
+	width: 80%;
+	opacity: 0;
+}
+
+#usermanager_userproperties {
+	position:absolute;
+	top : 40px;
+	left : 200px;
+}
+
+#usermanager_userlist {
+	position:absolute;
+	top : 40px;
+	left : 20px;
+}
+
+#usermanager {
+	color: black;
+	text-align: center;
+	font-style: bold;
+	position:absolute;
+	left : -1000px;
+	top:150px;
+	padding: 3px;
+	width: 80%;
+	visibility: hidden;
+}
+
+#availableapps {
+	color: black;
+	text-align: center;
+	font-style: bold;
+	position:absolute;
+	left : -1000px;
+	top:150px;
+	padding: 3px;
+	width: 80%;
+	visibility: hidden;
+}
+
+#appdetails {
+	text-align: center;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.8);
+	position:absolute;
+	left : 0px;
+	top:0px;
+	width: 100%;
+	height: 100%;
+	visibility: hidden;
+	opacity: 0;
+	z-index:100;
+}
+
+
+#appdetails_content {
+	color: #ffffff;
+	position:absolute;
+	left : 0px;
+	top:0px;
+	width: 100%;
+	height: 100%;
+	opacity: 1;
+	z-index:101;
+}
+
+
+#debugger {
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.8);
+	border-radius: 10px;
+	padding: 3px;
+	border:2px solid #cccccc;
+	position:absolute;
+	left:40px;
+	top:40px;
+	bottom:40px;
+	right:40px;
+	opacity: 0;
+}
+
+#logger {
+	visibility: hidden;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.8);
+	border-radius: 10px;
+	padding: 3px;
+	border:2px solid #cccccc;
+	position:absolute;
+	left:40px;
+	top:40px;
+	bottom:40px;
+	right:40px;
+	opacity: 0;
+	z-index:110;
+}
+
+
+#debugger_output {
+	color: #ffffff;
+  	font-size:10pt;
+	background-color: rgba(0,0,0,0.0);
+	border:0px solid #cccccc;
+	padding: 3px;
+	left:10px;
+	width:95%;
+}
+
+
+#debugger_console {
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.0);
+	border-radius: 4px;
+	padding: 3px;
+	border:2px solid #cccccc;
+	position:absolute;
+	left:10px;
+	bottom:10px;
+	right:10px;
+}
+
+
+#debug {
+	color: #ffffff;
+	background-color: #3c3c5c;
+	padding: 4px;
+	border:1px solid #444488;
+	position:absolute;
+	left:-402px;
+	top:0px;
+}

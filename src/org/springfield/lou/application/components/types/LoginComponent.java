@@ -47,7 +47,6 @@ import org.springfield.mojo.interfaces.ServiceManager;
 public class LoginComponent extends BasicComponent {
 	
 	public void put(String from,String msg) {
-		System.out.println("LOGIN TEST");
 		Boolean handled = false;
         int pos = msg.indexOf("(");
         if (pos!=-1) {
@@ -131,7 +130,7 @@ public class LoginComponent extends BasicComponent {
 			}
 			
 			String random = barney.get("createaccount("+sfrom.getApplication().getDomain()+","+account+","+email+","+password+")", null, null);	
-			result = barney.get("sendsignupmail("+sfrom.getApplication().getDomain()+","+account+","+random+")", null, null);
+			result = barney.get("sendsignupmail("+sfrom.getApplication().getDomain()+","+account+","+random+","+sfrom.getApplication().getHtmlPath()+")", null, null);
 			app.executeActionlist(sfrom,"login/signuplinksend");
 		}
 
@@ -156,7 +155,8 @@ public class LoginComponent extends BasicComponent {
 			
 			String ticket = barney.get("login("+sfrom.getApplication().getDomain()+","+account+","+password+")", null, null);
 			if (ticket!=null && !ticket.equals("-1")) {
-				System.out.println("TICKET = "+ticket);
+				//System.out.println("TICKET = "+ticket);
+				//System.out.println("HTMLPATH="+sfrom.getApplication().getHtmlPath());
 				sfrom.onNewUser(account);
 				return ticket;
 			}

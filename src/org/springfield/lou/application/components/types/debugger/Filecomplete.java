@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springfield.lou.fs.Fs;
-import org.springfield.lou.fs.FsNode;
+import org.springfield.fs.*;
 
 /**
  * Filecomplete command for filesystem debugger

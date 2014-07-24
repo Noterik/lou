@@ -19,12 +19,14 @@
 * along with Lou.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package org.springfield.lou.fs;
+package org.springfield.lou.util;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import org.springfield.fs.FSXMLStrainer;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -34,6 +36,8 @@ import org.dom4j.Node;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.homer.LazyMarge;
 import org.springfield.lou.homer.MargeObserver;
+import org.springfield.mojo.interfaces.ServiceInterface;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 /**
  * NodeObserver
@@ -70,7 +74,11 @@ public class NodeObserver implements MargeObserver {
 	
 	private void sendInitialState(){
 		System.out.println("NodeObserver.sendInitialState()");
-		String responseStr = LazyHomer.sendRequestBart("GET", node, "<fsxml><properties><depth>2</depth></properties></fsxml>", "text/xml");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return;
+		String responseStr = smithers.get(node, "<fsxml><properties><depth>2</depth></properties></fsxml>", "text/xml");
+	
+	//	String responseStr = LazyHomer.sendRequestBart("GET", node, "<fsxml><properties><depth>2</depth></properties></fsxml>", "text/xml");
 		try {
 			Document response = DocumentHelper.parseText(responseStr);
 			xml = filterAllowed(response);
@@ -130,7 +138,12 @@ public class NodeObserver implements MargeObserver {
 		if(method.equals("PUT") || method.equals("DELETE")){
 			String[] urls = url.split(",");
 			String updatedUrl = urls[0];
-			String updatedNode = LazyHomer.sendRequestBart("GET", updatedUrl, "<fsxml><properties><depth>4</depth></properties></fsxml>", "text/xml");
+			
+			
+			ServiceInterface smithers = ServiceManager.getService("smithers");
+			if (smithers==null) return;
+			
+			String updatedNode = smithers.get(updatedUrl, "<fsxml><properties><depth>4</depth></properties></fsxml>", "text/xml");
 			try {
 				Document response = DocumentHelper.parseText(updatedNode);
 				List<Node> errors = response.selectNodes("//error");
