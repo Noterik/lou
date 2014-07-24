@@ -210,9 +210,15 @@ public class LouServlet extends HttpServlet {
 				if (app.equals("")) app="test";
 			}
 			String fullappname = uri.substring(4);
-			String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
-			body+="<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
+			//String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
+			//body+="<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
+			// CWI / AngularJS compatible
+			//String body="<!doctype html>";
+			//body+="<html ng-app=\"tkkDemoApp\">";
+			String body = "<!DOCTYPE html PUBLIC \"-//HbbTV//1.1.1//EN\" \"http://www.hbbtv.org/dtd/HbbTV-1.1.1.dtd\">";
+			body += "<html xmlns=\"http://www.w3.org/1999/xhtml\">";
 			body+="<head>\n";
+			body+="<meta http-equiv=\"Content-Type\" content=\"application/vnd.hbbtv.xml+xhtml; utf-8\" />";
 			body+="<meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />";
 			body+="<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\" />";
 			body+="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
@@ -240,6 +246,8 @@ public class LouServlet extends HttpServlet {
 			body+="<title></title>\n";
 			body+="</head>\n";
 			
+			// CWI / AngularJS compatible
+			//body+="<body ng-view>\n";
 			body+="<body>\n";
 
 			body+="<div id=\"screen\" />\n";

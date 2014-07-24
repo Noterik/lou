@@ -1,2 +1,6 @@
 
 *.class
+
+build/lou.jar
+
+dist/lou.war
