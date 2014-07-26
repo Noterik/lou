@@ -98,6 +98,7 @@ public class LouServer {
 		// init properties xml
 		initConfigurationXML();		
 		ApplicationManager.instance(); // trigger the start of the manager
+		ServiceHandler.instance();
 		running = true;
 	}
 	

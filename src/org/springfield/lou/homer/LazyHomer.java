@@ -418,7 +418,7 @@ public class LazyHomer implements MargeObserver {
 			e.printStackTrace();
 		}
 		
-		Level logLevel = Level.INFO;
+		Level logLevel = Level.OFF;
 		LOG.getRootLogger().setLevel(Level.OFF);
 		LOG.getLogger(PACKAGE_ROOT).setLevel(logLevel);
 		LOG.info("logging level: " + logLevel);
