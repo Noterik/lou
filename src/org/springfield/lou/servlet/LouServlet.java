@@ -45,6 +45,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.springfield.lou.ServiceHandler;
 import org.springfield.lou.application.ActionList;
 import org.springfield.lou.application.ApplicationManager;
 import org.springfield.lou.application.Html5ApplicationInterface;
@@ -53,6 +54,7 @@ import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.screen.Capabilities;
 import org.springfield.lou.screen.Screen;
 import org.springfield.lou.tools.XMLHelper;
+import org.springfield.mojo.http.ProxyHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -114,6 +116,24 @@ public class LouServlet extends HttpServlet {
 				return;
 			}
 		}
+		
+		// if proxy request send it to Servicehandler 
+		if (body.startsWith("/lou/proxy/")) {
+			ProxyHandler.get("lou",request,response);
+			return;
+		}
+		
+		/*
+		if (body.startsWith("/lou/proxy/")) {
+			ServiceHandler sh = ServiceHandler.instance();
+			String rbody = sh.get(body,null, null);
+			response.setContentType("text/xml; charset=UTF-8");
+			OutputStream out = response.getOutputStream();
+			out.write(rbody.getBytes());
+			out.close();
+			return;
+		}
+		*/
 		
 		// need to move to be faster
 		String params = request.getQueryString();

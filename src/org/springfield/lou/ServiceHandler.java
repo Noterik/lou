@@ -1,5 +1,6 @@
 package org.springfield.lou;
 
+import org.springfield.lou.homer.LazyHomer;
 import org.springfield.mojo.interfaces.ServiceInterface;
 import org.springfield.mojo.interfaces.ServiceManager;
 
@@ -20,7 +21,7 @@ public class ServiceHandler implements ServiceInterface{
 	}
 	
 	public String get(String path,String fsxml,String mimetype) {
-		return null;
+		return "this is a test from remote "+LazyHomer.myip;
 	}
 	
 	public String put(String path,String value,String mimetype) {
