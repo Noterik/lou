@@ -57,7 +57,7 @@ public class MargeTimerThread extends Thread {
 		while (running) {
 			try {	
 				sleep(10000);
-				if (LazyHomer.isSelectedSmithers()) LazyHomer.setLastSeen();
+				LazyHomer.setLastSeen();
 				for(Iterator<MargeObserver> iter = observers.keySet().iterator(); iter.hasNext(); ) {
 					MargeObserver obs = (MargeObserver)iter.next();
 					String url = observers.get(obs);

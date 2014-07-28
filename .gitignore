@@ -1,14 +1,6 @@
 
 *.class
 
-*.class
+build/lou.jar
 
-*.class
-
-*.jar
-
-*.war
-
-*.class
-
-*.class
+dist/lou.war
