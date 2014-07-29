@@ -23,6 +23,7 @@ package org.springfield.lou.application;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -31,10 +32,12 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.codec.binary.Base64;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.restlet.service.ConverterService;
 import org.springfield.lou.application.components.types.OpenappsComponent;
 import org.springfield.lou.application.types.DashboardApplication;
 import org.springfield.fs.*;
@@ -192,6 +195,33 @@ public class ApplicationManager extends Thread {
     
     public static void startLogger(String url) {
     		logcollection =  new FSList(url);
+    }
+    
+    public static String getApplicationWarAsString(String appname,String version) {
+    	String filename = "/springfield/lou/apps/"+appname+"/"+version+"/war/smt_"+appname+"app.war";
+    	FileInputStream fileInputStream=null;
+    	 File file = new File(filename);
+ 
+        byte[] bytes = new byte[(int) file.length()];
+ 
+        try {
+        	fileInputStream = new FileInputStream(file);
+        	fileInputStream.read(bytes);
+        	fileInputStream.close();
+ 
+        	String result = new String(Base64.encodeBase64(bytes));
+        	return result;
+         }catch(Exception e){
+        	e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public static void writeApplicationWarFromString(String appname,String version,String input) {
+    	byte[] bytes = Base64.decodeBase64(input.getBytes());
+    	System.out.println("BYTES SIZE="+bytes.length);
+    	//writeBytesToFile(bytes,writedir+"/jar/smt_"+appname+"app.jar");
+    	writeBytesToFile(bytes,"/tmp/"+appname+".war");
     }
     
     public static void log(Html5ApplicationInterface app,FsNode n) {
@@ -624,7 +654,7 @@ public class ApplicationManager extends Thread {
 	
 	
     
-    private void writeBytesToFile(byte[] bytes,String filename) {
+    private static void writeBytesToFile(byte[] bytes,String filename) {
     	try {
     		FileOutputStream stream = new FileOutputStream(filename);
     		try {
