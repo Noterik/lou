@@ -169,6 +169,11 @@ public class LazyHomer implements MargeObserver {
 		return -1;
 	}
 	
+	public static boolean inDeveloperMode() {
+		LouProperties mp = lous.get(myip);
+		return mp.getDeveloperMode();
+	}
+	
 	public static int getNumberOfLous() {
 		return lous.size();
 	}
@@ -191,6 +196,7 @@ public class LazyHomer implements MargeObserver {
 					String status = child.selectSingleNode("properties/status").getText();
 					String name = child.selectSingleNode("properties/name").getText();
 
+
 					// lets put all in our lou list
 					LouProperties mp = lous.get(ipnumber);
 					if (mp==null) {
@@ -198,11 +204,21 @@ public class LazyHomer implements MargeObserver {
 						lous.put(ipnumber, mp);
 
 					}
+					
 					mp.setIpNumber(ipnumber);
 					mp.setName(name);
 					mp.setStatus(status);
 					mp.setDefaultLogLevel(child.selectSingleNode("properties/defaultloglevel").getText());
 					mp.setPreferedSmithers(child.selectSingleNode("properties/preferedsmithers").getText());
+					Node dn =  child.selectSingleNode("properties/developermode");
+					if (dn!=null) {
+						String dm = dn.getText();
+						if (dm!=null && dm.equals("true")) {
+							mp.setDeveloperMode(true);
+						}
+					}
+					
+					//System.out.println("DEVELOPER MODE = "+mp.getDeveloperMode());
 					
 					//System.out.println("comparing ip "+ipnumber+" with "+myip);					
 					if (ipnumber.equals(myip)) {

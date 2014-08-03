@@ -137,21 +137,32 @@ public class ApplicationManager extends Thread implements MargeObserver {
     	// so lets see what version is in production !
     	ApplicationClassLoader cl = new ApplicationClassLoader();
     	try {
-    		String productionid = getProductionId(name);
-    		if (productionid==null) return null;
+    		String version = null;
+    		if (LazyHomer.inDeveloperMode()) {
+    			version = getDevelopmentId(name);
+    		} else {
+    			version = getProductionId(name);
+    		}
+    		if (version==null) return null;
     		
     		// check if we have it not get it ?
-    		if (!haveAppLocally(name,productionid)) {
+    		if (!haveAppLocally(name,version)) {
     			// load it from remote
-    			copyAppFromRemote("10.88.8.35",name,productionid);
+    			String ips[] = whoHasWar(name,version);
+    			if (ips!=null) {
+    				System.out.println("WHO HAS WAR = "+ips[0]);
+    				copyAppFromRemote(ips[0],name,version); // hardcoded
+    			} else {
+    				return null;
+    			}
     		}
-    		cl.setJarName(name,productionid);
+    		cl.setJarName(name,version);
 			Object o = cl.loadClass(name).getConstructor(String.class).newInstance(name);
 			Html5ApplicationInterface newapp = (Html5ApplicationInterface)o;
-			newapp.setHtmlPath("/springfield/lou/apps/"+newapp.getAppname()+"/"+productionid+"/");
+			newapp.setHtmlPath("/springfield/lou/apps/"+newapp.getAppname()+"/"+version+"/");
 			// execute the first command list
 			newapp.executeActionlist("init");
-    		System.out.println("NEW APP="+newapp+" version="+productionid);
+    		System.out.println("NEW APP="+newapp+" version="+version+" D="+LazyHomer.inDeveloperMode());
     		return newapp;
     	} catch(Exception e) {
     		System.out.println("ApplicationManager ");
@@ -163,6 +174,11 @@ public class ApplicationManager extends Thread implements MargeObserver {
     public String getProductionId(String appname) {
     	Html5AvailableApplication app = getAvailableApplicationByInstance(appname);
     	return app.getProductionVersion();
+    }
+    
+    public String getDevelopmentId(String appname) {
+    	Html5AvailableApplication app = getAvailableApplicationByInstance(appname);
+    	return app.getDevelopmentVersion();
     }
 
     public Html5AvailableApplication getAvailableApplicationByInstance(String url) {
@@ -893,6 +909,17 @@ public class ApplicationManager extends Thread implements MargeObserver {
     		e.printStackTrace();
     	}
     }   
+    
+    private String[] whoHasWar(String appname,String version) {
+    	FsNode node = Fs.getNode("/domain/internal/service/lou/apps/"+appname+"/versions/"+version);
+    	if (node!=null) {
+    		String ids = node.getProperty("waravailableat");
+    		if (ids!=null) {
+    			return ids.split(",");
+    		}
+    	}
+    	return null;
+    }
     
     private void purgeOldVersions() {
 		int shour = 3600;

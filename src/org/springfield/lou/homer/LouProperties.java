@@ -35,6 +35,7 @@ public class LouProperties {
 	private String status;
 	private String defaultloglevel;
 	private String preferedsmithers;
+	private boolean developermode = false;
 	
 	public void setIpNumber(String i) {
 		ipnumber = i;
@@ -74,5 +75,13 @@ public class LouProperties {
 	
 	public String getPreferedSmithers() {
 		return preferedsmithers;
+	}
+	
+	public void setDeveloperMode(boolean m) {
+		developermode = m;
+	}
+	
+	public boolean getDeveloperMode() {
+		return developermode;
 	}
 }
