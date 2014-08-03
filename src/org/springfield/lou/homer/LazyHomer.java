@@ -38,6 +38,7 @@ import java.util.Properties;
 import org.apache.log4j.*;
 import org.dom4j.*;
 import org.springfield.lou.*;
+import org.springfield.marge.Marge;
 import org.springfield.mojo.http.HttpHelper;
 import org.springfield.mojo.interfaces.ServiceInterface;
 import org.springfield.mojo.interfaces.ServiceManager;
@@ -65,6 +66,7 @@ public class LazyHomer implements MargeObserver {
 	static String group = "224.0.0.0";
 	static int ttl = 1;
 	static boolean noreply = true;
+	static Marge mojomarge;
 	static LazyMarge marge;
 	static LazyLou lazylou;
 	static SmithersProperties selectedsmithers = null;
@@ -95,6 +97,7 @@ public class LazyHomer implements MargeObserver {
 		}
 		LOG.info("Lou init service name = lou on ipnumber = "+myip+" on port "+port);
 		marge = new LazyMarge();
+		mojomarge = Marge.instance();
 		//lazylou = new LazyLou();
 		
 		// lets watch for changes in the service nodes in smithers

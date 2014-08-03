@@ -42,6 +42,8 @@ import org.springfield.lou.application.components.types.OpenappsComponent;
 import org.springfield.lou.application.types.DashboardApplication;
 import org.springfield.fs.*;
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.marge.Marge;
+import org.springfield.marge.MargeObserver;
 // org.springfield.lou.maggie.MaggieLoader;
 import org.springfield.mojo.interfaces.ServiceInterface;
 import org.springfield.mojo.interfaces.ServiceManager;
@@ -54,7 +56,7 @@ import org.springfield.mojo.interfaces.ServiceManager;
  * @package org.springfield.lou.application
  *
  */
-public class ApplicationManager extends Thread {
+public class ApplicationManager extends Thread implements MargeObserver {
 	
 	private static Map<String, Html5ApplicationInterface> runningapps = new HashMap<String, Html5ApplicationInterface>();
 	private static Map<String, Html5AvailableApplication> availableapps = null;
@@ -65,6 +67,8 @@ public class ApplicationManager extends Thread {
 	private static Map<String, Html5ApplicationInterface> router = new HashMap<String, Html5ApplicationInterface>();
 	private static Map<String, String> externalMessages = new HashMap<String, String>();
     private static FSList logcollection = null;
+    private static String lastremoteappname = "";
+    private static String lastremoteversion = "";
     
 	private ApplicationManager() {
         System.out.println("Application Manager started");
@@ -73,7 +77,7 @@ public class ApplicationManager extends Thread {
 			if (availableapps==null) loadAvailableApps(); // new test for urlmapping
 			start();
            // new MaggieLoader();
-
+			Marge.addObserver("/domain/internal/service/lou/apps/*",this);
 		}
     }
     
@@ -135,6 +139,12 @@ public class ApplicationManager extends Thread {
     	try {
     		String productionid = getProductionId(name);
     		if (productionid==null) return null;
+    		
+    		// check if we have it not get it ?
+    		if (!haveAppLocally(name,productionid)) {
+    			// load it from remote
+    			copyAppFromRemote("10.88.8.35",name,productionid);
+    		}
     		cl.setJarName(name,productionid);
 			Object o = cl.loadClass(name).getConstructor(String.class).newInstance(name);
 			Html5ApplicationInterface newapp = (Html5ApplicationInterface)o;
@@ -221,7 +231,9 @@ public class ApplicationManager extends Thread {
     	byte[] bytes = Base64.decodeBase64(input.getBytes());
     	System.out.println("BYTES SIZE="+bytes.length);
     	//writeBytesToFile(bytes,writedir+"/jar/smt_"+appname+"app.jar");
-    	writeBytesToFile(bytes,"/tmp/"+appname+".war");
+    	
+	    String warname = "/springfield/lou/remotedir/smt_"+appname+"app.war";
+    	writeBytesToFile(bytes,warname);
     }
     
     public static void log(Html5ApplicationInterface app,FsNode n) {
@@ -387,6 +399,99 @@ public class ApplicationManager extends Thread {
     					dapp.newApplicationFound(appname);
     				 }
     				 
+    				 // lets tell set the available variable to tell the others we have it.
+    				 
+    				 FsNode unode = Fs.getNode("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring);
+    				 if (unode!=null) {
+    					 String warlist = unode.getProperty("waravailableat");
+    					 if (warlist==null || warlist.equals("")) {
+    						 Fs.setProperty("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring,"waravailableat", LazyHomer.myip);
+    					 } else {
+    						 System.out.println("BUG ? Already available war "+warlist+" a="+appname);
+    					 }
+    				 }
+    			} catch(Exception e) {
+    				e.printStackTrace();
+    			}    	
+    		}
+    	}
+    }
+    
+    private void processRemoteWar(File warfile,String wantedname,String datestring) {
+    	// lets first check some vitals to check what it is
+    	String warfilename = warfile.getName();
+    	if (warfilename.startsWith("smt_") && warfilename.endsWith("app.war")) {
+    		// ok so filename checks out is smt_[name]app.war format
+    		String appname = warfilename.substring(4, warfilename.length()-7);
+    		if (wantedname.equals(appname)) {
+    			// ok found file is the wanted file
+    			// format "29-Aug-2013-16:55"
+    			System.out.println("NEW VERSION OF "+appname+" FOUND INSTALLING");
+    			
+    			String writedir = "/springfield/lou/apps/"+appname+"/"+datestring;
+    			
+       			// make all the dirs we need
+    			File md = new File(writedir);
+    			md.mkdirs();
+    			md = new File(writedir+"/war");
+    			md.mkdirs();
+    			md = new File(writedir+"/jar");
+    			md.mkdirs();
+    			md = new File(writedir+"/components");
+    			md.mkdirs();
+    			md = new File(writedir+"/css");
+    			md.mkdirs();
+    			md = new File(writedir+"/libs");
+    			md.mkdirs();
+    			
+    			try {
+    				JarFile war = new JarFile(warfile);  
+    				System.out.println("WARFILE="+war+" "+warfile);
+    		
+    				// ok lets first find the jar file !
+    				 JarEntry entry = war.getJarEntry("WEB-INF/lib/smt_"+appname+"app.jar");  
+    				 if (entry!=null) {
+    					 byte[] bytes = readJarEntryToBytes(war.getInputStream(entry)); 
+    					 writeBytesToFile(bytes,writedir+"/jar/smt_"+appname+"app.jar");
+    				 }
+    				 // unpack all in eddie dir
+    				 Enumeration<JarEntry> iter = war.entries();  
+    				 while (iter.hasMoreElements()) {  
+    				       JarEntry lentry = iter.nextElement();
+    				       //System.out.println("LI="+lentry.getName());
+    				       String lname = lentry.getName();
+    				       if (!lname.endsWith("/")) {
+    				    	   int pos = lname.indexOf("/"+appname+"/");
+    				    	   if (pos!=-1) {
+    				    		   String nname = lname.substring(pos+appname.length()+2);
+    				    		   System.out.println("LE="+nname);
+    				    		   String dname = nname.substring(0,nname.lastIndexOf('/'));
+    				    		   File de = new File(writedir+"/"+dname);
+    				    		   de.mkdirs();
+    		    				   byte[] bytes = readJarEntryToBytes(war.getInputStream(lentry)); 
+    		    				   writeBytesToFile(bytes,writedir+"/"+nname);
+    				    	   }
+    				       }
+    				 }
+    				 war.close();
+    				 File ren = new File("/springfield/lou/uploaddir/"+warfilename);
+    				 File nen = new File(writedir+"/war/smt_"+appname+"app.war");
+    				 System.out.println("REN="+warfilename);
+    				 System.out.println("REN="+writedir+"/war/smt_"+appname+"app.war");
+    				 System.out.println("MOVE FILE="+ren.renameTo(nen));
+    				 
+    				 
+    				 // lets tell set the available variable to tell the others we have it.
+    				 
+    				 FsNode unode = Fs.getNode("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring);
+    				 if (unode!=null) {
+    					 String warlist = unode.getProperty("waravailableat");
+    					 if (warlist==null || warlist.equals("")) {
+    						// Fs.setProperty("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring,"waravailableat", LazyHomer.myip);
+    					 } else {
+    						 System.out.println("BUG ? Already available war "+warlist+" a="+appname);
+    					 }
+    				 }
     			} catch(Exception e) {
     				e.printStackTrace();
     			}    	
@@ -396,7 +501,7 @@ public class ApplicationManager extends Thread {
     
     public void makeProduction(String appname,String version) {
     	// first we should change smithers and signal the others
-    	
+    	System.out.println("MAKE PRODUCTION CALLED ON "+appname+" "+version);
     	// change in memory
     	Html5AvailableApplication avapp = getAvailableApplication(appname);
     	if (avapp!=null) {
@@ -575,7 +680,7 @@ public class ApplicationManager extends Thread {
 							if (production!=null) {
 								Html5AvailableApplicationVersion pv = vapp.getVersionByUrl(production);
 								if (pv!=null) {
-									pv.setProductionState(true);
+									pv.loadProductionState(true);
 									// lets scan for triggers !
 									String scanpath="/springfield/lou/apps/"+vapp.getId()+"/"+pv.getId()+"/actionlists/";
 									//System.out.println("ACTIONLIST PRESCANNER="+scanpath);
@@ -585,7 +690,7 @@ public class ApplicationManager extends Thread {
 							//System.out.println("N5.2");
 							if (development!=null) {
 								Html5AvailableApplicationVersion dv = vapp.getVersionByUrl(development);
-								if (dv!=null) dv.setDevelopmentState(true);
+								if (dv!=null) dv.loadDevelopmentState(true);
 							}
 							//System.out.println("N5.3");
 						}else{
@@ -652,6 +757,128 @@ public class ApplicationManager extends Thread {
 		}
 	}
 	
+	private boolean haveAppLocally(String appname,String id) {
+		int pos = appname.indexOf("html5application/");
+	    appname = appname.substring(pos+17);
+	    String jarname = "/springfield/lou/apps/"+appname+"/"+id+"/jar/smt_"+appname+"app.jar";
+		File file = new File(jarname);
+		if (file.exists()) {
+			System.out.println("APP JAR FOUND");
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean copyAppFromRemote(String ipnumber,String appname,String id) {
+		int pos = appname.indexOf("html5application/");
+	    appname = appname.substring(pos+17);
+		System.out.println("REMOTE NAME = "+appname+" ID="+id);
+		ServiceInterface lou = ServiceManager.getService("lou",ipnumber);
+		if (lou!=null) {
+			String xml = "<fsxml><properties></properties></fsxml>";
+			String result = lou.get("getAppWAR("+appname+","+id,xml,"text/xml");
+			if (result!=null) {
+				System.out.println("LOU REMOTE="+result.length());
+				writeApplicationWarFromString(appname,id,result);
+				// process it
+			    File warfile = new File("/springfield/lou/remotedir/smt_"+appname+"app.war");
+			    if (warfile.exists()) {
+			    	processRemoteWar(warfile,appname,id);
+			    } else {
+			    	System.out.println("FAILED TO LOAD FROM REMOTE");
+			    }
+				
+			} else {
+				System.out.println("LOU REMOTE NULL");
+			}
+		}
+		return false;
+	}
+	
+	public void remoteSignal(String from,String method,String url) {
+		//System.out.println("APP MANAGER SEES UPLOAD ! "+from+" "+method+" "+url);
+		if (!method.equals("PUT") || url.indexOf("/versions/")==-1) return;
+		System.out.println("APP MANAGER SEES UPLOAD ! "+from+" "+method+" "+url);
+		
+		// first find out who has this app
+		int pos = from.indexOf('/');
+		if (pos!=-1) {
+			String ipnumber = from.substring(pos+1);
+			// ok now lets find the app name and version !
+			int pos2 = url.indexOf("/apps/");
+			if (pos2!=-1) {
+				String appname = url.substring(pos2+6);
+				int pos3 = appname.indexOf("/versions/");
+				String version = appname.substring(pos3+10);
+				appname = appname.substring(0,pos3);
+				int pos4 = version.indexOf(",");
+				if (pos4!=-1) {
+					version = version.substring(0,pos4);
+					System.out.println("IP="+ipnumber+" APP="+appname+" ID="+version+" URL="+url+" L="+lastremoteappname);
+					if (!lastremoteappname.equals(appname) && !lastremoteversion.equals(version)) {
+						lastremoteappname = appname;
+						lastremoteversion = version;
+						System.out.println("2IP="+ipnumber+" APP="+appname+" ID="+version+" URL="+url);
+			    		if (!haveAppLocally("html5application/"+appname,version)) {
+			    			// load it from remote
+			    			try {
+			    				Thread.sleep(3000);
+			    			} catch(Exception e) {
+			    				
+			    			}
+			    			copyAppFromRemote(ipnumber,"html5application/"+appname,version);
+			    	    	Html5AvailableApplication avapp = getAvailableApplication(appname);
+			    	    	if (avapp!=null) {
+			    	    		System.out.println("DELETE APP CACHE");
+			    	    		String source = "/springfield/lou/apps/"+appname+"/"+version;
+			    	    		String target = "/springfield/tomcat/webapps/ROOT/eddie/apps/"+appname;
+			    	    		
+			    	    		try {
+			    	    			// create dir if needed
+			    	    			Runtime.getRuntime().exec("/bin/mkdir "+target);
+			    	    			
+			    	        		// delete symlinks if available
+			    	    			Runtime.getRuntime().exec("/bin/rm "+target+"/css");
+			    	    			Runtime.getRuntime().exec("/bin/rm "+target+"/libs");
+			    	    			Runtime.getRuntime().exec("/bin/rm "+target+"/img");
+			    	    			
+			    	    			// create the sym links
+			    	    			Runtime.getRuntime().exec("/bin/ln -s "+source+"/css "+target+"/css");
+			    	    			Runtime.getRuntime().exec("/bin/ln -s "+source+"/libs "+target+"/libs");
+			    	    			Runtime.getRuntime().exec("/bin/ln -s "+source+"/img "+target+"/img");
+			    	    		} catch(Exception e) {
+			    	    			System.out.println("Can't create symlink");
+			    	    			e.printStackTrace();
+			    	    		}
+			    	    		
+			    	    		avapp.deleteCaches();
+			    	        	loadAvailableApps();
+					    	     Html5ApplicationInterface app = getApplication("/domain/webtv/html5application/dashboard");
+			    				 if (app!=null) {
+			    					DashboardApplication dapp = (DashboardApplication)app;
+			    					dapp.newApplicationFound(appname);
+			    				 }
+			    					for(Iterator<String> iter = runningapps.keySet().iterator(); iter.hasNext(); ) {
+			    						String appn = (String)iter.next();
+			    						if (appn.indexOf("html5application/"+appname)!=-1) {
+			    							Html5ApplicationInterface rapp = runningapps.get(appn);
+			    							System.out.println("SHUTDOWN OLD APP="+rapp.getId());
+			    							rapp.shutdown();
+			    							runningapps.remove(appn);
+			    							break;
+			    						}
+			    					}
+			    				
+			    	    	}
+			    		}
+					}
+				}
+			}
+		}
+		lastremoteappname = "";
+		lastremoteversion = "";
+		System.out.println("REMOTE INSTALL DONE !!!");
+	}
 	
     
     private static void writeBytesToFile(byte[] bytes,String filename) {
@@ -678,7 +905,6 @@ public class ApplicationManager extends Thread {
 		Iterator<String> it = keys.iterator();
 		while(it.hasNext()){
 			String next = (String) it.next();
-			System.out.println("PURGE APPNAME="+next);
 			copies = new ArrayList<String>();
 			Html5AvailableApplication vapp = ApplicationManager.instance().getAvailableApplication(next);
 			Iterator<Html5AvailableApplicationVersion> it2 = vapp.getOrderedVersions();
@@ -715,9 +941,9 @@ public class ApplicationManager extends Thread {
 					// check if we already have one
 					if (!copies.contains(token)) {
 						copies.add(token);
-						System.out.println(token+" NAME="+next+" DATE="+dates+" DELTA="+delta+" KEEP");
+						//System.out.println(token+" NAME="+next+" DATE="+dates+" DELTA="+delta+" KEEP");
 					} else {
-						System.out.println(token+" NAME="+next+" DATE="+dates+" DELTA="+delta+" DELETE");
+						//System.out.println(token+" NAME="+next+" DATE="+dates+" DELTA="+delta+" DELETE");
 						if (!version.isDevelopmentVersion() && !version.isProductionVersion()) {
 							vapp.deleteVersion(dates);
 						}

@@ -27,7 +27,7 @@ public class ServiceHandler implements ServiceInterface{
 		if (pos!=-1) {
 			String command = uri.substring(0,pos);
 			String values = uri.substring(pos+1);
-			values = values.substring(0,values.length()-1);
+			values = values.substring(0,values.length());
 			String[] params = values.split(",");
 			return handleGetCommand(command,params);
 		}

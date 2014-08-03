@@ -77,10 +77,14 @@ public class Html5AvailableApplicationVersion implements Comparable<Html5Availab
 		nodes.put(ipnumber, ipnumber); // might have real objects in the future
 	}
 	
+	public void loadDevelopmentState(Boolean b) {
+		development = b;
+	}
+	
 	public void setDevelopmentState(Boolean b) {
 		ServiceInterface smithers = ServiceManager.getService("smithers");
 		if (smithers==null) return;
-		
+		System.out.println("SD1");
 		if (b==development) return; // was already correct state
 		String basepath = "/domain/internal/service/lou/apps/"+app.getId()+"/development";
 		if (b==false) {
@@ -92,16 +96,21 @@ public class Html5AvailableApplicationVersion implements Comparable<Html5Availab
 			String postpath = basepath+"/"+id;
 			String newpath = "/domain/internal/service/lou/apps/"+app.getId()+"/versions/"+id;
 			String newbody = "<fsxml><attributes><referid>"+newpath+"</referid></attributes></fsxml>"; 
-			smithers.put(postpath+"/attributes",newbody,"text/xml");
+			System.out.println("SD2a="+smithers.put(postpath+"/attributes",newbody,"text/xml"));
 			//LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
+			System.out.println("SD2");
 		}
 		development = b;
+	}
+	
+	public void loadProductionState(Boolean b) {
+		production = b;
 	}
 	
 	public void setProductionState(Boolean b) {
 		ServiceInterface smithers = ServiceManager.getService("smithers");
 		if (smithers==null) return;
-		
+		System.out.println("SP1");
 		if (b==production) return; // was already correct state
 		String basepath = "/domain/internal/service/lou/apps/"+app.getId()+"/production";
 		if (b==false) {
@@ -114,7 +123,8 @@ public class Html5AvailableApplicationVersion implements Comparable<Html5Availab
 			String newpath = "/domain/internal/service/lou/apps/"+app.getId()+"/versions/"+id;
 			String newbody = "<fsxml><attributes><referid>"+newpath+"</referid></attributes></fsxml>"; 
 			//LazyHomer.sendRequest("PUT",postpath+"/attributes",newbody,"text/xml");
-			smithers.put(postpath+"/attributes",newbody,"text/xml");
+			System.out.println("SP2a="+smithers.put(postpath+"/attributes",newbody,"text/xml"));
+			System.out.println("SP2");
 		}
 		production = b;
 	}
