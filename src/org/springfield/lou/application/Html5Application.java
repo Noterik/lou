@@ -763,6 +763,10 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		log(s,msg,LOG_INFO);
     }
     
+    public boolean inDevelopemntMode() {
+    	return LazyHomer.inDeveloperMode();
+    }
+    
     /**
      * 
      * adds application id, checks with barney and talks to mojo if allowed

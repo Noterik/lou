@@ -89,7 +89,6 @@ public class LouServlet extends HttpServlet {
     
     public static void addUrlTrigger(String url,String actionlistname) {
     		String parts[] = url.split(",");
-    		System.out.println("MAPPING="+url);
     		urlmappings.put(parts[0],parts[1]+","+actionlistname);
     }
     
@@ -113,7 +112,7 @@ public class LouServlet extends HttpServlet {
 		String body = request.getRequestURI();
 		if(request.getParameter("method")!=null) {
 			if(request.getParameter("method").equals("post")){
-				System.out.println("going for post");
+				//System.out.println("going for post");
 				doPost(request, response);
 				return;
 			}
@@ -598,9 +597,7 @@ public class LouServlet extends HttpServlet {
 			if (pos!=-1) {
 				String checkhost = mapurl.substring(0,pos);
 				mapurl = mapurl.substring(pos+1);
-				System.out.println("CHECKHOST="+mapurl+" "+inurl+" "+checkhost+" "+host);
 				if (checkhost.equals(host) && inurl.equals(mapurl)) {
-					System.out.println("MATCH!!!");
 					String[] paths = urlmappings.get(lmapurl).split(",");
 					return paths;
 				}
