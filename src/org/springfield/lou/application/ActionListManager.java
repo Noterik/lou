@@ -63,6 +63,7 @@ public class ActionListManager {
 				BufferedReader br = new BufferedReader(new FileReader(actiondir+File.separator+prefix+filename));
 				StringBuffer str = new StringBuffer();
 				String command = br.readLine();
+				//System.out.println("commmand="+command);
 				while (command != null) {
 					String urlmapping = command.toLowerCase();
 					if (urlmapping.indexOf("seturltrigger")==0) {
@@ -107,6 +108,7 @@ public class ActionListManager {
 					StringBuffer str = new StringBuffer();
 					String command = br.readLine();
 					while (command != null) {
+						System.out.println("commmand="+command);
 						String urlmapping = command.toLowerCase();
 						if (urlmapping.indexOf("seturltrigger")==0) {
 							urlmapping = urlmapping.substring(urlmapping.indexOf("(")+1);
@@ -116,6 +118,7 @@ public class ActionListManager {
 							if (!prefix.equals("")) {
 								aname = prefix+aname;
 							}
+							System.out.println("commmand2="+urlmapping);
 							LouServlet.addUrlTrigger(urlmapping,aname);
 						}
 						command = br.readLine();

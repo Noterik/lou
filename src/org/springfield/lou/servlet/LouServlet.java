@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -88,6 +89,7 @@ public class LouServlet extends HttpServlet {
     
     public static void addUrlTrigger(String url,String actionlistname) {
     		String parts[] = url.split(",");
+    		System.out.println("MAPPING="+url);
     		urlmappings.put(parts[0],parts[1]+","+actionlistname);
     }
     
@@ -137,7 +139,10 @@ public class LouServlet extends HttpServlet {
 		
 		// need to move to be faster
 		String params = request.getQueryString();
-		String[] paths = urlMappingPerApplication(request,body);
+		String hostname = request.getHeader("host");
+		String[] paths = urlMappingPerApplication(hostname,body);
+		
+		
 		if (paths!=null) {
 			body = paths[0];
 			if (params!=null) {
@@ -584,14 +589,26 @@ public class LouServlet extends HttpServlet {
 		return caps;
 	}
 	
-	private String[] urlMappingPerApplication(HttpServletRequest request,String inurl) {
+	private String[] urlMappingPerApplication(String host,String inurl) {
 		Iterator it = urlmappings.keySet().iterator();
 		while(it.hasNext()){
 			String mapurl = (String) it.next();
-			//System.out.println("MAP CHECK ON =*"+mapurl+"* *"+inurl+"*");
-			if (inurl.equals(mapurl)) {
-				String[] paths = urlmappings.get(mapurl).split(",");
-				return paths;
+			String lmapurl = mapurl;
+			int pos = mapurl.indexOf("@");
+			if (pos!=-1) {
+				String checkhost = mapurl.substring(0,pos);
+				mapurl = mapurl.substring(pos+1);
+				System.out.println("CHECKHOST="+mapurl+" "+inurl+" "+checkhost+" "+host);
+				if (checkhost.equals(host) && inurl.equals(mapurl)) {
+					System.out.println("MATCH!!!");
+					String[] paths = urlmappings.get(lmapurl).split(",");
+					return paths;
+				}
+			} else {
+				if (inurl.equals(mapurl)) {
+					String[] paths = urlmappings.get(mapurl).split(",");
+					return paths;
+				}
 			}
 		}
 		return null;

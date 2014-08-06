@@ -150,7 +150,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
     			// load it from remote
     			String ips[] = whoHasWar(name,version);
     			if (ips!=null) {
-    				System.out.println("WHO HAS WAR = "+ips[0]);
+    				//System.out.println("WHO HAS WAR = "+ips[0]);
     				copyAppFromRemote(ips[0],name,version); // hardcoded
     			} else {
     				return null;
@@ -245,10 +245,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
     
     public static void writeApplicationWarFromString(String appname,String version,String input) {
     	byte[] bytes = Base64.decodeBase64(input.getBytes());
-    	System.out.println("BYTES SIZE="+bytes.length);
-    	//writeBytesToFile(bytes,writedir+"/jar/smt_"+appname+"app.jar");
-    	
-	    String warname = "/springfield/lou/remotedir/smt_"+appname+"app.war";
+        String warname = "/springfield/lou/remotedir/smt_"+appname+"app.war";
     	writeBytesToFile(bytes,warname);
     }
     
@@ -263,7 +260,6 @@ public class ApplicationManager extends Thread implements MargeObserver {
     
     
     public void upload(String appname) {
-    	System.out.println("UPLOAD DONE FOR = "+appname);
     	// lets see what we have in our upload dir
     	//TODO: make this configurable or at least windows compatible
     	File uploaddir = new File("/springfield/lou/uploaddir");
@@ -271,7 +267,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
     		File[] files = uploaddir.listFiles();
     		if (files!=null) {
     			for (File uploadfile : files) {
-    				System.out.println("UPLOAD FILE="+uploadfile.toString());
+    				//System.out.println("UPLOAD FILE="+uploadfile.toString());
     				processUploadedWar(uploadfile,appname);
     		    }
     	 }
@@ -286,16 +282,16 @@ public class ApplicationManager extends Thread implements MargeObserver {
     		File[] files = uploaddir.listFiles();
     		if (files!=null) {
     			for (File uploadfile : files) {
-    				System.out.println("UPLOAD FILE="+uploadfile.toString());
+    				//System.out.println("UPLOAD FILE="+uploadfile.toString());
     				String filename = uploadfile.getName();
     				int pos = filename.indexOf("smt_");
     				if (pos!=-1) {
     					filename = filename.substring(pos+4);
     					pos = filename.indexOf("app.war");
-        				System.out.println("POS2="+pos);
+        				//System.out.println("POS2="+pos);
     					if (pos!=-1) {
     						filename = filename.substring(0,pos);
-    						System.out.println("APPNAME FILE="+filename);
+    						//System.out.println("APPNAME FILE="+filename);
     						createNewAppEntry(filename);
     						processUploadedWar(uploadfile,filename);
     					}
@@ -377,7 +373,6 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				    	   int pos = lname.indexOf("/"+appname+"/");
     				    	   if (pos!=-1) {
     				    		   String nname = lname.substring(pos+appname.length()+2);
-    				    		   System.out.println("LE="+nname);
     				    		   String dname = nname.substring(0,nname.lastIndexOf('/'));
     				    		   File de = new File(writedir+"/"+dname);
     				    		   de.mkdirs();
@@ -389,9 +384,9 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				 war.close();
     				 File ren = new File("/springfield/lou/uploaddir/"+warfilename);
     				 File nen = new File(writedir+"/war/smt_"+appname+"app.war");
-    				 System.out.println("REN="+warfilename);
-    				 System.out.println("REN="+writedir+"/war/smt_"+appname+"app.war");
-    				 System.out.println("MOVE FILE="+ren.renameTo(nen));
+    				 //System.out.println("REN="+warfilename);
+    				 //System.out.println("REN="+writedir+"/war/smt_"+appname+"app.war");
+    				 ren.renameTo(nen);
     				 
 		    	     loadAvailableApps();
     				 // should we make in development or production based on autodeploy ?
@@ -700,14 +695,20 @@ public class ApplicationManager extends Thread implements MargeObserver {
 									// lets scan for triggers !
 									String scanpath="/springfield/lou/apps/"+vapp.getId()+"/"+pv.getId()+"/actionlists/";
 									//System.out.println("ACTIONLIST PRESCANNER="+scanpath);
-									ActionListManager.readActionListsDirForUrlTriggers(scanpath);
+									if (!LazyHomer.inDeveloperMode()) ActionListManager.readActionListsDirForUrlTriggers(scanpath);
 								}
 							}
 							//System.out.println("N5.2");
 							if (development!=null) {
 								Html5AvailableApplicationVersion dv = vapp.getVersionByUrl(development);
-								if (dv!=null) dv.loadDevelopmentState(true);
+								if (dv!=null) {
+									dv.loadDevelopmentState(true);
+									System.out.println("DV="+dv.getId());
+									String scanpath="/springfield/lou/apps/"+vapp.getId()+"/"+dv.getId()+"/actionlists/";
+									if (LazyHomer.inDeveloperMode()) ActionListManager.readActionListsDirForUrlTriggers(scanpath);
+								}
 							}
+							
 							//System.out.println("N5.3");
 						}else{
 							System.out.println("NOT AN ELEMENT!");
