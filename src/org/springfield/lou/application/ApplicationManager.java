@@ -67,8 +67,6 @@ public class ApplicationManager extends Thread implements MargeObserver {
 	private static Map<String, Html5ApplicationInterface> router = new HashMap<String, Html5ApplicationInterface>();
 	private static Map<String, String> externalMessages = new HashMap<String, String>();
     private static FSList logcollection = null;
-    private static String lastremoteappname = "";
-    private static String lastremoteversion = "";
     
 	private ApplicationManager() {
         System.out.println("Application Manager started");
@@ -475,7 +473,6 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				    	   int pos = lname.indexOf("/"+appname+"/");
     				    	   if (pos!=-1) {
     				    		   String nname = lname.substring(pos+appname.length()+2);
-    				    		   System.out.println("LE="+nname);
     				    		   String dname = nname.substring(0,nname.lastIndexOf('/'));
     				    		   File de = new File(writedir+"/"+dname);
     				    		   de.mkdirs();
@@ -487,9 +484,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				 war.close();
     				 File ren = new File("/springfield/lou/uploaddir/"+warfilename);
     				 File nen = new File(writedir+"/war/smt_"+appname+"app.war");
-    				 System.out.println("REN="+warfilename);
-    				 System.out.println("REN="+writedir+"/war/smt_"+appname+"app.war");
-    				 System.out.println("MOVE FILE="+ren.renameTo(nen));
+    				 ren.renameTo(nen);
     				 
     				 
     				 // lets tell set the available variable to tell the others we have it.
@@ -498,9 +493,9 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				 if (unode!=null) {
     					 String warlist = unode.getProperty("waravailableat");
     					 if (warlist==null || warlist.equals("")) {
-    						// Fs.setProperty("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring,"waravailableat", LazyHomer.myip);
+    						Fs.setProperty("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring,"waravailableat", LazyHomer.myip);
     					 } else {
-    						 System.out.println("BUG ? Already available war "+warlist+" a="+appname);
+     						Fs.setProperty("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring,"waravailableat",warlist+","+LazyHomer.myip);
     					 }
     				 }
     			} catch(Exception e) {
@@ -703,7 +698,6 @@ public class ApplicationManager extends Thread implements MargeObserver {
 								Html5AvailableApplicationVersion dv = vapp.getVersionByUrl(development);
 								if (dv!=null) {
 									dv.loadDevelopmentState(true);
-									System.out.println("DV="+dv.getId());
 									String scanpath="/springfield/lou/apps/"+vapp.getId()+"/"+dv.getId()+"/actionlists/";
 									if (LazyHomer.inDeveloperMode()) ActionListManager.readActionListsDirForUrlTriggers(scanpath);
 								}
@@ -813,9 +807,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
 	}
 	
 	public void remoteSignal(String from,String method,String url) {
-		//System.out.println("APP MANAGER SEES UPLOAD ! "+from+" "+method+" "+url);
 		if (!method.equals("PUT") || url.indexOf("/versions/")==-1) return;
-		System.out.println("APP MANAGER SEES UPLOAD ! "+from+" "+method+" "+url);
 		
 		// first find out who has this app
 		int pos = from.indexOf('/');
@@ -831,22 +823,27 @@ public class ApplicationManager extends Thread implements MargeObserver {
 				int pos4 = version.indexOf(",");
 				if (pos4!=-1) {
 					version = version.substring(0,pos4);
-					System.out.println("IP="+ipnumber+" APP="+appname+" ID="+version+" URL="+url+" L="+lastremoteappname);
-					if (!lastremoteappname.equals(appname) && !lastremoteversion.equals(version)) {
-						lastremoteappname = appname;
-						lastremoteversion = version;
-						System.out.println("2IP="+ipnumber+" APP="+appname+" ID="+version+" URL="+url);
+					//System.out.println("IP="+ipnumber+" APP="+appname+" ID="+version+" URL="+url+" L="+lastremoteappname);
+			    	FsNode node = Fs.getNode("/domain/internal/service/lou/apps/"+appname+"/versions/"+version);
+			    	if (node!=null) {
+			    		String ids = node.getProperty("waravailableat");
+			    		//System.out.println("REMOTE DONE="+ids+" "+ipnumber);
+			    		if (ids!=null) {
+			    			
+			    		} else {
+			    			// property not set yet
+			    			return;
+			    		}
+			    	} else {
+			    		// node not found at all
+			    		return;
+			    	}
+					
+						System.out.println("I CAN INSTALL 2IP="+ipnumber+" APP="+appname+" ID="+version+" URL="+url);
 			    		if (!haveAppLocally("html5application/"+appname,version)) {
-			    			// load it from remote
-			    			try {
-			    				Thread.sleep(3000);
-			    			} catch(Exception e) {
-			    				
-			    			}
 			    			copyAppFromRemote(ipnumber,"html5application/"+appname,version);
 			    	    	Html5AvailableApplication avapp = getAvailableApplication(appname);
 			    	    	if (avapp!=null) {
-			    	    		System.out.println("DELETE APP CACHE");
 			    	    		String source = "/springfield/lou/apps/"+appname+"/"+version;
 			    	    		String target = "/springfield/tomcat/webapps/ROOT/eddie/apps/"+appname;
 			    	    		
@@ -885,16 +882,13 @@ public class ApplicationManager extends Thread implements MargeObserver {
 			    							break;
 			    						}
 			    					}
+			    					System.out.println("REMOTE INSTALL DONE !!!");
 			    				
 			    	    	}
 			    		}
-					}
 				}
 			}
 		}
-		lastremoteappname = "";
-		lastremoteversion = "";
-		System.out.println("REMOTE INSTALL DONE !!!");
 	}
 	
     
