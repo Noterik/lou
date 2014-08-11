@@ -44,6 +44,7 @@ public class Capabilities {
 	public final int MODE_APHONE_LANDSCAPE = 7;
 	public final int MODE_ATABLED_PORTRAIT = 8;
 	public final int MODE_ATABLED_LANDSCAPE = 9;
+	public final int MODE_HBBTV = 10;
 	
 	/**
 	 * Constructor for the Capabilities Class
@@ -84,7 +85,9 @@ public class Capabilities {
 	public int getDeviceMode() {
 		String ua = getCapability("useragent");
 		if (ua!=null) {
-			if (ua.indexOf("iPhone")!=-1) {
+			if (ua.indexOf("HbbTV")!=-1) {
+				return MODE_HBBTV;
+			} else if (ua.indexOf("iPhone")!=-1) {
 				String o = getCapability("orientation");
 				if (o.equals("0")) {
 					return MODE_IPHONE_PORTRAIT;

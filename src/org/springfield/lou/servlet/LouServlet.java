@@ -109,6 +109,14 @@ public class LouServlet extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");  
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+		System.out.println("METHOD="+request.getMethod());
+		String mt = request.getContentType();
+		if (mt!=null && mt.indexOf("text/put")!=-1) {
+			doPut(request,response);
+			return;
+		}
+		
+		System.out.println("REQ="+request.getRequestURI()+" PARAMS="+request.getQueryString()+" MT="+request.getContentType());
 		String body = request.getRequestURI();
 		if(request.getParameter("method")!=null) {
 			if(request.getParameter("method").equals("post")){
@@ -211,7 +219,7 @@ public class LouServlet extends HttpServlet {
 			response.setContentType("text/html; charset=UTF-8");
 			OutputStream out = response.getOutputStream();
 			//PrintWriter out = response.getWriter();
-			
+			System.out.println("INDEX REQ="+request.getRequestURI());
 			//String params = request.getQueryString();
 			String user = null;
 			String app = "test";
@@ -259,9 +267,18 @@ public class LouServlet extends HttpServlet {
 //			System.out.println(basepath+"domain"+File.separator+domain+File.separator+"js"+File.separator+"eddie.js");
 			
 			//Added by David to test
-			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/eddie.js?cache\"></script>\n";
-			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/main.js\"></script>\n";
-			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/stacktrace.js\"></script>\n";
+			
+			System.out.println("USER-AGENT="+request.getHeader("user-agent"));
+			String agent = request.getHeader("user-agent");
+			if (agent.indexOf("HbbTV/1.1.1")==-1) {
+				body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/eddie.js?cache\"></script>\n";
+				body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/main.js\"></script>\n";
+				body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/stacktrace.js\"></script>\n";
+			} else {
+				body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/eddie_hbbtv.js?cache\"></script>\n";
+				body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/main_hbbtv.js\"></script>\n";
+				body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/stacktrace_hbbtv.js\"></script>\n";	
+			}
 			body+="<title></title>\n";
 			body+="</head>\n";
 			
@@ -273,6 +290,7 @@ public class LouServlet extends HttpServlet {
 			body+="</body>\n";
 			body+="</html>\n";
 			out.write(body.getBytes());
+			out.flush();
 			out.close();
 		} catch(Exception e) {
 			System.out.println("Lou can't create index page");
@@ -314,113 +332,7 @@ public class LouServlet extends HttpServlet {
 	 * Post request handles mainly external requests
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin", "*");  
-		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
-		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
-		
-		String body = request.getRequestURI();
-		System.out.println("INCOMMING REQUEST IS="+body);
-
-		HashMap<String, String[]> urlProperties = (HashMap<String, String[]>) request.getParameterMap();
-		HashMap<String, String[]> properties = new HashMap<String, String[]>();
-		//read post data
-		StringBuffer jb = new StringBuffer();
-		String line = null;
-		try {
-			BufferedReader reader = request.getReader();
-			while ((line = reader.readLine()) != null)
-				jb.append(line);
-			reader.close();
-		} catch (Exception e) { /*report an error*/ }
-		
-		String xml = jb.toString();
-		//parse URI
-		String reqUri = request.getRequestURI();
-		String domain = reqUri.substring(reqUri.indexOf("/domain/")+8, reqUri.indexOf("/", reqUri.indexOf("/domain/")+8));
-		String user = (reqUri.indexOf("/user/")!=-1) ? reqUri.substring(reqUri.indexOf("/user/")+6, reqUri.indexOf("/", reqUri.indexOf("/user/")+6)) : ""  ;
-		String application = (reqUri.indexOf("/", reqUri.indexOf("/html5application/")+18)!=-1) ? reqUri.substring(reqUri.indexOf("/html5application/")+18, reqUri.indexOf("/", reqUri.indexOf("/html5application/")+18)) : reqUri.substring(reqUri.indexOf("/html5application/")+18);
-		String component = (reqUri.indexOf("/component/")!=-1) ? ((reqUri.indexOf("/", reqUri.indexOf("/component/")+11) !=-1) ? reqUri.substring(reqUri.indexOf("/component/")+11, reqUri.indexOf("/", reqUri.indexOf("/component/")+11)) : reqUri.substring(reqUri.indexOf("/component/")+11)) : ""  ;
-		String applicationUri = "/domain/" + domain + ((user.equals("")) ? "" : "/user/" + user) + "/html5application/" + application;
-		//System.out.println(xml);
-		
-		try {
-			//create xml from post data
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder docBuilder;
-			docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(new InputSource(new StringReader(xml)));
-			
-			//extract message tags
-			NodeList messages = doc.getElementsByTagName("message");
-			//parse every message separately 
-			for(int m=0;m<messages.getLength();m++){
-				//clear properties of previous message
-				properties.clear();
-				//get current message properties
-				NodeList nl = ((Element)messages.item(m)).getElementsByTagName("properties").item(0).getChildNodes();
-				//put all properties in hashmap
-				for(int i=0;i<nl.getLength();i++){
-					String[] temp = {nl.item(i).getTextContent()};
-					if(properties.containsKey(nl.item(i).getNodeName())){
-						List<String> ls = new ArrayList<String>();
-						ls.addAll(Arrays.asList(properties.get(nl.item(i).getNodeName())));
-						ls.add(nl.item(i).getTextContent());
-						properties.put(nl.item(i).getNodeName(), ls.toArray(new String[ls.size()]));
-						
-					}else 
-						properties.put(nl.item(i).getNodeName() , temp);
-				}			
-				//merge URL properties with xml properties
-				properties.putAll(urlProperties);
-				properties.remove("method");      
-				
-				//check if URI has all the info we need
-				if(reqUri.indexOf("/domain/")==-1 || reqUri.indexOf("/html5application/")==-1){
-					System.out.println("request does not meet our rest structure requirements");
-					response.setContentType("text/xml; charset=UTF-8");
-					PrintWriter out = response.getWriter();
-					out.print("Request Uri error.");out.flush();out.close();return;
-				}
-				
-				ProxyComponent proxy = null;
-				try{
-					//check if the proxy already exists
-					proxy = (ProxyComponent)ApplicationManager.instance().getApplication(applicationUri).getComponentManager().getComponent(component);
-				}catch(java.lang.NullPointerException e){}
-				if(proxy==null){
-					//if proxy does not exist try creating a new one
-					try {
-						String classname = "org.springfield.lou.application.components.types.proxy."+component.substring(0,1).toUpperCase()+component.substring(1,component.indexOf("proxy"))+"Proxy";
-						System.out.println("classname::: " + classname);
-						Object o = Class.forName(classname).getConstructor(String.class).newInstance(component.toLowerCase());
-						proxy = (ProxyComponent)o;	
-						//add proxy component to the application
-						proxy.setApplication(ApplicationManager.instance().getApplication(applicationUri));
-						ApplicationManager.instance().getApplication(applicationUri).addComponent(proxy);
-						//init is necessary because object does not know
-						//its application when constructed
-						proxy.init();
-					} catch(Exception e) {
-						e.printStackTrace();
-						System.out.println("Component with name \""+component+"\" does not exist");
-						PrintWriter out = response.getWriter();
-						out.print("Component with name \""+component+"\" does not exist");
-						out.flush();out.close();return;
-					}
-				}
-				proxy.put("external", properties);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("XML parsing error. Getting properties only from URL.");
-		}
-		
-		PrintWriter out = response.getWriter();
-		out.print("OK");
-		out.flush();
-		out.close();
-		
-		return;
+		doPut(request,response);
 	}
 	
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -428,6 +340,9 @@ public class LouServlet extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
 		//read the data from the put request
+		
+		//System.out.println("PUT REQ="+request.getRequestURI());
+		
 		InputStream inst = request.getInputStream();
 		String data;
 		

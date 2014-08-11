@@ -335,9 +335,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
 	        	}
 	        	smithers.put("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
 
-	        	//String result = LazyHomer.sendRequest("PUT","/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring+"/properties",newbody,"text/xml");
-    			//System.out.println("RESULTD="+result);
-    			// make all the dirs we need
+	        	// make all the dirs we need
     			File md = new File(writedir);
     			md.mkdirs();
     			md = new File(writedir+"/war");
@@ -521,28 +519,27 @@ public class ApplicationManager extends Thread implements MargeObserver {
     			newv.setProductionState(true);
     		}
     		
-    		//TODO: make this configurable or at least windows compatible
-    		String source = "/springfield/lou/apps/"+appname+"/"+version;
-    		String target = "/springfield/tomcat/webapps/ROOT/eddie/apps/"+appname;
-    		
-    		//System.out.println("SO="+source);
-    		//System.out.println("TA="+target);
-    		try {
-    			// create dir if needed
-    			Runtime.getRuntime().exec("/bin/mkdir "+target);
+    		if (!LazyHomer.inDeveloperMode()) {
+    			//TODO: make this configurable or at least windows compatible
+    			String source = "/springfield/lou/apps/"+appname+"/"+version;
+    			String target = "/springfield/tomcat/webapps/ROOT/eddie/apps/"+appname;
+    			try {
+    				// create dir if needed
+    				Runtime.getRuntime().exec("/bin/mkdir "+target);
     			
-        		// delete symlinks if available
-    			Runtime.getRuntime().exec("/bin/rm "+target+"/css");
-    			Runtime.getRuntime().exec("/bin/rm "+target+"/libs");
-    			Runtime.getRuntime().exec("/bin/rm "+target+"/img");
+    				// delete symlinks if available
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/css");
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/libs");
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/img");
     			
-    			// create the sym links
-    			Runtime.getRuntime().exec("/bin/ln -s "+source+"/css "+target+"/css");
-    			Runtime.getRuntime().exec("/bin/ln -s "+source+"/libs "+target+"/libs");
-    			Runtime.getRuntime().exec("/bin/ln -s "+source+"/img "+target+"/img");
-    		} catch(Exception e) {
-    			System.out.println("Can't create symlink");
-    			e.printStackTrace();
+    				// create the sym links
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/css "+target+"/css");
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/libs "+target+"/libs");
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/img "+target+"/img");
+    			} catch(Exception e) {
+    				System.out.println("Can't create symlink");
+    				e.printStackTrace();
+    			}
     		}
 
         	// we need to unload the old one from memory
@@ -578,6 +575,30 @@ public class ApplicationManager extends Thread implements MargeObserver {
     		if (newv!=null) {
     			newv.setDevelopmentState(true);
     		}
+    		
+    		if (LazyHomer.inDeveloperMode()) {
+    			//TODO: make this configurable or at least windows compatible
+    			String source = "/springfield/lou/apps/"+appname+"/"+version;
+    			String target = "/springfield/tomcat/webapps/ROOT/eddie/apps/"+appname;
+    			try {
+    				// create dir if needed
+    				Runtime.getRuntime().exec("/bin/mkdir "+target);
+    			
+    				// delete symlinks if available
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/css");
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/libs");
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/img");
+    			
+    				// create the sym links
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/css "+target+"/css");
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/libs "+target+"/libs");
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/img "+target+"/img");
+    			} catch(Exception e) {
+    				System.out.println("Can't create symlink");
+    				e.printStackTrace();
+    			}
+    		}
+
     		avapp.deleteCaches();
     	} else {
     		System.out.println("Appliction not found "+appname);
@@ -590,6 +611,8 @@ public class ApplicationManager extends Thread implements MargeObserver {
 		for(Iterator<String> iter = runningapps.keySet().iterator(); iter.hasNext(); ) {
 			String appn = (String)iter.next();
 			if (appn.indexOf("html5application/"+appname)!=-1) {
+				Html5ApplicationInterface rapp = runningapps.get(appn);
+				rapp.shutdown();
 				runningapps.remove(appn);
 			}
 		}

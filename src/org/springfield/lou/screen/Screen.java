@@ -458,7 +458,11 @@ public class Screen {
 				refappname = refappname.substring(0,pos);
 				Html5AvailableApplication refapp = ApplicationManager.instance().getAvailableApplication(refappname);
 				if (refapp!=null) {
-					filename = "/springfield/lou/apps/"+refappname+File.separator+refapp.getProductionVersion()+File.separator+"components"+File.separator+refcname+File.separator+refcname+".js";
+					if (LazyHomer.inDeveloperMode()) {
+						filename = "/springfield/lou/apps/"+refappname+File.separator+refapp.getDevelopmentVersion()+File.separator+"components"+File.separator+refcname+File.separator+refcname+".js";
+					} else {
+						filename = "/springfield/lou/apps/"+refappname+File.separator+refapp.getProductionVersion()+File.separator+"components"+File.separator+refcname+File.separator+refcname+".js";						
+					}
 				}
 			}
 		}
@@ -605,7 +609,11 @@ public class Screen {
 				refappname = refappname.substring(0,pos);
 				Html5AvailableApplication refapp = ApplicationManager.instance().getAvailableApplication(refappname);
 				if (refapp!=null) {
-					filename = "/springfield/lou/apps/"+refappname+File.separator+refapp.getProductionVersion()+File.separator+"components"+File.separator+refcname+File.separator+refcname+".html";
+					if (LazyHomer.inDeveloperMode()) {
+						filename = "/springfield/lou/apps/"+refappname+File.separator+refapp.getDevelopmentVersion()+File.separator+"components"+File.separator+refcname+File.separator+refcname+".html";
+					} else {
+						filename = "/springfield/lou/apps/"+refappname+File.separator+refapp.getProductionVersion()+File.separator+"components"+File.separator+refcname+File.separator+refcname+".html";
+					}
 				}
 			}
 		}
