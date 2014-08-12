@@ -53,6 +53,7 @@ public class FsFileReader {
 
 				filename = basepath+"apps"+File.separator+app.getAppname()+File.separator+"components"+File.separator+templatepath;
 				file = new File(filename);
+				System.out.println("check if file exists "+filename);
 				if (!file.exists()) {
 					// ok also not in app/component
 
