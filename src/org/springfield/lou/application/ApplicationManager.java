@@ -407,7 +407,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				 }
     				 
     				 // lets tell set the available variable to tell the others we have it.
-    				 
+    				 System.out.println("DANIEL CHECK 1");
     				 FsNode unode = Fs.getNode("/domain/internal/service/lou/apps/"+appname+"/versions/"+datestring);
     				 if (unode!=null) {
     					 String warlist = unode.getProperty("waravailableat");
@@ -549,7 +549,9 @@ public class ApplicationManager extends Thread implements MargeObserver {
     	}
     	
     	// we need to unload the old one from memory
-		for(Iterator<String> iter = runningapps.keySet().iterator(); iter.hasNext(); ) {
+		ArrayList<String> keys = new ArrayList<String>(runningapps.keySet());
+		for(Iterator<String> iter = keys.iterator(); iter.hasNext(); ) {
+	//	for(Iterator<String> iter = runningapps.keySet().iterator(); iter.hasNext(); ) {
 			String appn = (String)iter.next();
 			if (appn.indexOf("html5application/"+appname)!=-1) {
 				Html5ApplicationInterface rapp = runningapps.get(appn);
@@ -608,7 +610,9 @@ public class ApplicationManager extends Thread implements MargeObserver {
 		avapp.deleteCaches();
 		
     	// we need to unload the old one from memory
-		for(Iterator<String> iter = runningapps.keySet().iterator(); iter.hasNext(); ) {
+		
+		ArrayList<String> keys = new ArrayList<String>(runningapps.keySet());
+		for(Iterator<String> iter = keys.iterator(); iter.hasNext(); ) {
 			String appn = (String)iter.next();
 			if (appn.indexOf("html5application/"+appname)!=-1) {
 				Html5ApplicationInterface rapp = runningapps.get(appn);
@@ -830,6 +834,7 @@ public class ApplicationManager extends Thread implements MargeObserver {
 	}
 	
 	public void remoteSignal(String from,String method,String url) {
+		System.out.println("MULTICAST="+from+" "+method+" "+url);
 		if (!method.equals("PUT") || url.indexOf("/versions/")==-1) return;
 		
 		// first find out who has this app
@@ -895,7 +900,10 @@ public class ApplicationManager extends Thread implements MargeObserver {
 			    					DashboardApplication dapp = (DashboardApplication)app;
 			    					dapp.newApplicationFound(appname);
 			    				 }
-			    					for(Iterator<String> iter = runningapps.keySet().iterator(); iter.hasNext(); ) {
+			    				 
+			    					ArrayList<String> keys = new ArrayList<String>(runningapps.keySet());
+			    					for(Iterator<String> iter = keys.iterator(); iter.hasNext(); ) {
+			    				//	for(Iterator<String> iter = runningapps.keySet().iterator(); iter.hasNext(); ) {
 			    						String appn = (String)iter.next();
 			    						if (appn.indexOf("html5application/"+appname)!=-1) {
 			    							Html5ApplicationInterface rapp = runningapps.get(appn);
