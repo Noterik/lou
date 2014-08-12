@@ -234,6 +234,7 @@ public class LouServlet extends HttpServlet {
 			pos = uri.indexOf("/html5application/");
 			if (pos!=-1) {
 				app = uri.substring(pos+18);
+				app = app.indexOf("?") == -1 ? app : app.substring(0, app.indexOf("?"));
 				if (app.equals("")) app="test";
 			}
 			String fullappname = uri.substring(4);
