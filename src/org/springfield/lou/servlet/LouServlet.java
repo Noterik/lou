@@ -151,11 +151,25 @@ public class LouServlet extends HttpServlet {
 		
 		
 		if (paths!=null) {
+			//check if url trigger also contains params
+			String triggerParams = null;
+			if (paths[0].indexOf("?") != -1) {
+				triggerParams = paths[0].substring(paths[0].indexOf("?")+1);
+				paths[0] = paths[0].substring(0,paths[0].indexOf("?"));
+			}
+			
 			body = paths[0];
+			
 			if (params!=null) {
 				params += "&actionlist="+paths[1];
+				if (triggerParams != null) {
+					params += "&"+triggerParams;
+				}
 			} else {
 				params = "actionlist="+paths[1];
+				if (triggerParams != null) {
+					params += "&"+triggerParams;
+				}
 			}
 		}
 		//System.out.println("PARAMS2="+params);
