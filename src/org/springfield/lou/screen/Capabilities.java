@@ -126,6 +126,7 @@ public class Capabilities {
 			case MODE_APHONE_LANDSCAPE : return "aphone_landscape"; 
 			case MODE_ATABLED_PORTRAIT : return "atabled_portrait";
 			case MODE_ATABLED_LANDSCAPE : return "atabled_landscape"; 
+			case MODE_HBBTV : return "hbbtv";
 		}
 		return null;
 	}

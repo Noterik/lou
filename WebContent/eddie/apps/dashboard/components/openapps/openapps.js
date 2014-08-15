@@ -26,7 +26,7 @@ function Openapps(options){
 
 	self.openlogger = function(restid) {
 		$('#logger').css('visibility','visible');
-                $('#logger').animate({opacity:'1'},800,function() { })
+        $('#logger').animate({opacity:'1'},800,function() { })
 		eddie.putLou('openapps','startlogger('+restid+')');
 	}
 

@@ -57,6 +57,7 @@ public class ActionList {
 					else if (action.equals("removecontent"))	{ handleRemoveContent(s,cmd[1],cmd[2]); }
 					else if (action.equals("setcontent"))	{ handleSetContent(s,cmd[1],cmd[2],cmd[3]); }
 					else if (action.equals("log"))	{ 
+							System.out.println("LOG="+action+" cmdl="+cmd.length);
 							if (cmd.length>2) { 
 								handleLog(s,cmd[1],cmd[2]); 
 							} else { 

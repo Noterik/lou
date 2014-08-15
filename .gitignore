@@ -4,3 +4,9 @@
 build/lou.jar
 
 dist/lou.war
+
+build/lou.jar
+
+dist/lou.war
+
+*.class

@@ -379,12 +379,12 @@ public class LouServlet extends HttpServlet {
 					    classname += apppart.substring(0,1).toUpperCase();
 					    classname += apppart.substring(1) + "Application";
 					}
-					System.out.println("WANT CLASS="+classname);
+					//System.out.println("WANT CLASS="+classname);
 					Object o = Class.forName(classname).getConstructor(String.class).newInstance(tappname);
 					app = (Html5ApplicationInterface)o;
 					String fullid = url.substring(url.indexOf("/domain/"));
 					app.setFullId(fullid);
-					System.out.println("ADDING APP="+app);
+					//System.out.println("ADDING APP="+app);
 					ApplicationManager.instance().addApplication(app);
 				} catch(Exception e) {
 					
