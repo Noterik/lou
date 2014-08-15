@@ -88,6 +88,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		int pos = id.indexOf("/html5application/");
 		if (pos!=-1) {
 			appname = id.substring(pos+18);
+			appname = appname.indexOf("?") == -1 ? appname : appname.substring(0, appname.indexOf("?"));
 			pos = appname.indexOf("/");
 		    if (pos!=-1) {
 		    	appname = appname.substring(0,pos);

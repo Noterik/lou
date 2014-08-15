@@ -531,11 +531,13 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				Runtime.getRuntime().exec("/bin/rm "+target+"/css");
     				Runtime.getRuntime().exec("/bin/rm "+target+"/libs");
     				Runtime.getRuntime().exec("/bin/rm "+target+"/img");
-    			
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/components");
+    				
     				// create the sym links
     				Runtime.getRuntime().exec("/bin/ln -s "+source+"/css "+target+"/css");
     				Runtime.getRuntime().exec("/bin/ln -s "+source+"/libs "+target+"/libs");
     				Runtime.getRuntime().exec("/bin/ln -s "+source+"/img "+target+"/img");
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/components "+target+"/components");
     			} catch(Exception e) {
     				System.out.println("Can't create symlink");
     				e.printStackTrace();
@@ -590,11 +592,13 @@ public class ApplicationManager extends Thread implements MargeObserver {
     				Runtime.getRuntime().exec("/bin/rm "+target+"/css");
     				Runtime.getRuntime().exec("/bin/rm "+target+"/libs");
     				Runtime.getRuntime().exec("/bin/rm "+target+"/img");
-    			
+    				Runtime.getRuntime().exec("/bin/rm "+target+"/components");
+    				
     				// create the sym links
     				Runtime.getRuntime().exec("/bin/ln -s "+source+"/css "+target+"/css");
     				Runtime.getRuntime().exec("/bin/ln -s "+source+"/libs "+target+"/libs");
     				Runtime.getRuntime().exec("/bin/ln -s "+source+"/img "+target+"/img");
+    				Runtime.getRuntime().exec("/bin/ln -s "+source+"/components "+target+"/components");
     			} catch(Exception e) {
     				System.out.println("Can't create symlink");
     				e.printStackTrace();
