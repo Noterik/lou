@@ -219,6 +219,9 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	}
 	
 	public void executeActionlist(Screen s,String name) {
+		System.out.println("executeActionlist()");
+		System.out.println(s);
+		System.out.println(name);
 		actionlistmanager.executeList(s, name);
 	}
 	

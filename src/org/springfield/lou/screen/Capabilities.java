@@ -42,9 +42,14 @@ public class Capabilities {
 	public final int MODE_IPAD_LANDSCAPE = 5;
 	public final int MODE_APHONE_PORTRAIT = 6;
 	public final int MODE_APHONE_LANDSCAPE = 7;
-	public final int MODE_ATABLED_PORTRAIT = 8;
-	public final int MODE_ATABLED_LANDSCAPE = 9;
+	public final int MODE_ATABLET_PORTRAIT = 8;
+	public final int MODE_ATABLET_LANDSCAPE = 9;
 	public final int MODE_HBBTV = 10;
+	
+	public final int PHONE_PORTRAIT_MIN_WIDTH = 320;
+	public final int PHONE_LANDSCAPE_MIN_WIDTH = 481;
+	public final int TABLET_PORTRAIT_MIN_WIDTH = 641;
+	public final int TABLET_LANDSCAPE_MIN_WIDTH = 961;
 	
 	/**
 	 * Constructor for the Capabilities Class
@@ -83,7 +88,11 @@ public class Capabilities {
 	}
 	
 	public int getDeviceMode() {
+		System.out.println("getDeviceMode()");
 		String ua = getCapability("useragent");
+		int width = Integer.parseInt(getCapability("screenwidth"));
+		int height = Integer.parseInt(getCapability("screenheight"));
+		
 		if (ua!=null) {
 			if (ua.indexOf("HbbTV")!=-1) {
 				return MODE_HBBTV;
@@ -104,10 +113,27 @@ public class Capabilities {
 			} else if (ua.indexOf("Android")!=-1) {
 				String o = getCapability("orientation");
 				System.out.println("OOO="+o);
-				if (o.equals("90") || o.equals("-90")) {
-					return MODE_ATABLED_PORTRAIT;
+				
+				if(o.equals("undefined")){
+					if(height > width){
+						o = "0";
+					}else{
+						o = "90";
+					}
+				}
+				
+				if (o.equals("0")) {
+					if(width > this.TABLET_PORTRAIT_MIN_WIDTH){
+						return MODE_ATABLET_PORTRAIT;
+					}else if(width > this.PHONE_PORTRAIT_MIN_WIDTH){
+						return MODE_APHONE_PORTRAIT;
+					}
 				} else {
-					return MODE_ATABLED_LANDSCAPE;	
+					if(width > this.TABLET_LANDSCAPE_MIN_WIDTH){
+						return MODE_ATABLET_LANDSCAPE;
+					}else if(width > this.PHONE_LANDSCAPE_MIN_WIDTH){
+						return MODE_APHONE_LANDSCAPE;
+					}
 				}	
 			}
 		}
@@ -124,8 +150,8 @@ public class Capabilities {
 			case MODE_IPAD_LANDSCAPE : return "ipad_landscape"; 
 			case MODE_APHONE_PORTRAIT : return "aphone_portrait";
 			case MODE_APHONE_LANDSCAPE : return "aphone_landscape"; 
-			case MODE_ATABLED_PORTRAIT : return "atabled_portrait";
-			case MODE_ATABLED_LANDSCAPE : return "atabled_landscape"; 
+			case MODE_ATABLET_PORTRAIT : return "atablet_portrait";
+			case MODE_ATABLET_LANDSCAPE : return "atablet_landscape"; 
 			case MODE_HBBTV : return "hbbtv";
 		}
 		return null;

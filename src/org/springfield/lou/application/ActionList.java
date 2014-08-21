@@ -83,8 +83,8 @@ public class ActionList {
 				if (value.equals("desktop") && cap.getDeviceMode()==cap.MODE_GENERIC) return true;
 				if (value.equals("ipad") && cap.getDeviceMode()==cap.MODE_IPAD_LANDSCAPE) return true;
 				if (value.equals("ipad") && cap.getDeviceMode()==cap.MODE_IPAD_PORTRAIT) return true;
-				if (value.equals("apad") && cap.getDeviceMode()==cap.MODE_ATABLED_LANDSCAPE) return true;
-				if (value.equals("apad") && cap.getDeviceMode()==cap.MODE_ATABLED_PORTRAIT) return true;
+				if (value.equals("atablet") && cap.getDeviceMode()==cap.MODE_ATABLET_LANDSCAPE) return true;
+				if (value.equals("atablet") && cap.getDeviceMode()==cap.MODE_ATABLET_PORTRAIT) return true;
 				if (value.equals("iphone") && cap.getDeviceMode()==cap.MODE_IPHONE_LANDSCAPE) return true;
 				if (value.equals("iphone") && cap.getDeviceMode()==cap.MODE_IPHONE_PORTRAIT) return true;
 				if (value.equals("aphone") && cap.getDeviceMode()==cap.MODE_APHONE_LANDSCAPE) return true;

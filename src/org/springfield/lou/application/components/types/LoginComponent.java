@@ -137,7 +137,8 @@ public class LoginComponent extends BasicComponent {
 	}
 	
 	private String getTicket(Screen sfrom,String account, String password) {
-		//System.out.println("A="+account+" P="+password);
+		
+		System.out.println("A="+account+" P="+password);
 		/* incase you need to get in :) */
 		/*
 		if (account.equals("admin") && password.equals("#@SQS!@##@#")) {
@@ -154,6 +155,7 @@ public class LoginComponent extends BasicComponent {
 			System.out.println("APPS="+sfrom.getApplication().getDomain());
 			
 			String ticket = barney.get("login("+sfrom.getApplication().getDomain()+","+account+","+password+")", null, null);
+			System.out.println("TICKET: " + ticket);
 			if (ticket!=null && !ticket.equals("-1")) {
 				//System.out.println("TICKET = "+ticket);
 				//System.out.println("HTMLPATH="+sfrom.getApplication().getHtmlPath());
