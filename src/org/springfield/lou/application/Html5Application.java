@@ -79,6 +79,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     protected String location_scope = "browserid";
     protected Map<String, NodeObserver> observingNodes;
 	protected Map<String, String> referids = new HashMap<String, String>();
+	protected Map<String, String> referidscss = new HashMap<String, String>();
 	protected Map<String, String> actionlists = new HashMap<String, String>();
     
     public Html5Application(String id, String remoteReciever) {
@@ -433,7 +434,19 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
  	}
 	
 	public void loadStyleSheet(Screen s,String sname) {
-		s.loadStyleSheet(getApplicationCSS(sname) , this);
+    	String refercss = getReferidCSS(sname);
+    	if (refercss==null) {
+    		s.loadStyleSheet(getApplicationCSS(sname) , this);
+    	} else {
+        	if (refercss.startsWith("/")) {
+    				String refappname = refercss.substring(1);
+    				int pos = refappname.indexOf("/");
+    				String refcss = refappname.substring(pos+1);
+    				refappname = refappname.substring(0,pos);
+    				s.loadStyleSheetRefer(getApplicationCSSRefer(refcss,refappname),refappname);
+        	}
+    		
+    	}
 		//s.loadStyleSheet(sname, this);
 	}
 	
@@ -481,6 +494,15 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	
 	public String getReferid(String ctype) {
 		return referids.get(ctype);
+	}
+	
+	public void addReferidCSS(String local,String refercss) {
+		referidscss.put(local, refercss);
+	}
+	
+	
+	public String getReferidCSS(String css) {
+		return referidscss.get(css);
 	}
 
 	
@@ -700,9 +722,19 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	
     public String getApplicationCSS(String name) {
     	// weird for now.
+    	System.out.println("CSS NAME="+name);
     	String path = "apps/"+appname+"/css/"+name+".css";
     	return path;
+     }
+    
+    public String getApplicationCSSRefer(String refcss,String refappname) {
+    	// weird for now.
+    	System.out.println("CSS NAME="+refcss);
+		String path = "apps/"+refappname+"/css/"+refcss+".css";
+		System.out.println("REFERID CSS !!!!="+path);
+		return path;
     }
+
     
     public String getDeviceCSS(String dstyle) {
     	// weird for now.

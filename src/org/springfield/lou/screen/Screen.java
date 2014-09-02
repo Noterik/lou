@@ -267,6 +267,8 @@ public class Screen {
 		//TODO: make this at least windows compatible or configurable
 		//System.out.println("Screen.loadStyleSheet(" + style + ", " + app + ")");
 		String stylepath ="/springfield/tomcat/webapps/ROOT/eddie/"+style;
+		// ugly but works
+		
 		
 		String packagepath = app.getHtmlPath();
 		if (packagepath!=null) {
@@ -275,7 +277,9 @@ public class Screen {
 				stylepath = packagepath + style.substring(pos+1);
 			}
 		}
-		//System.out.println("LOADING STYLE="+stylepath);
+		
+		
+		System.out.println("LOADING STYLE="+stylepath);
 		if (style.equals("apps/dashboard/css/dashboardapp.css")) {
 			stylepath="/springfield/tomcat/webapps/ROOT/eddie/apps/dashboard/css/generic.css";
 		}
@@ -295,6 +299,7 @@ public class Screen {
 			br.close();
 		} catch (FileNotFoundException e) {
 			failed=true;
+			System.out.println("COULD NOT FIND : "+stylepath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -344,6 +349,61 @@ public class Screen {
 		}
 	}
 	
+	public void loadStyleSheetRefer(String style,String refappname) {
+		//TODO: make this at least windows compatible or configurable
+		//System.out.println("Screen.loadStyleSheet(" + style + ", " + app + ")");
+		String stylepath ="/springfield/tomcat/webapps/ROOT/eddie/"+style;
+		// ugly but works
+		
+		/*
+		String packagepath = app.getHtmlPath();
+		if (packagepath!=null) {
+			int pos = style.indexOf("/css/");
+			if (pos!=-1) {
+				stylepath = packagepath + style.substring(pos+1);
+			}
+		}
+		*/
+		
+		
+		System.out.println("LOADING STYLE="+stylepath);
+
+//		stylepath ="C:\\\\springfield\\tomcat\\webapps\\ROOT\\eddie\\"+stylepath;
+		StringBuffer str = null;
+		try {
+			str = new StringBuffer();
+			BufferedReader br;
+			br = new BufferedReader(new FileReader(stylepath));
+			String line = br.readLine();
+			while (line != null) {
+				str.append(line);
+				str.append("\n");
+				line = br.readLine();
+			 }
+			br.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("COULD NOT FIND : "+stylepath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+			
+		String body = ""+ str.toString();
+		String stylename = stylepath.substring(stylepath.lastIndexOf("/")+1, stylepath.indexOf(".css"));
+		if(stylename.contains("_")) stylename = stylename.substring(0, stylename.indexOf("_"));
+		if (data==null) {
+			data = "setstyle(head)=" + stylename +"style,"+body;
+		} else {
+			data += "($end$)setstyle(head)="+ stylename +"style,"+body;
+		}
+		synchronized (this) {
+		    this.notify();
+		}
+	}
+
+
+	
+
 	public void removeStyle(String style){
 		
 		if (data==null) {

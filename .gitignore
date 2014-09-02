@@ -10,3 +10,5 @@ build/lou.jar
 dist/lou.war
 
 *.class
+
+*.class
