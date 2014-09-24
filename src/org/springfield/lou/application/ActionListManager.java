@@ -22,6 +22,9 @@ public class ActionListManager {
 	}
 	
 	public void executeList(Screen s,String name) {
+		if (name.indexOf("log(")!=-1 || name.equals("log")) { // some actionlists are ignored
+			return;
+		}
 		int pos = name.indexOf("(");
         if (pos!=-1) {
             String content = name.substring(pos+1,name.length()-1);

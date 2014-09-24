@@ -88,7 +88,6 @@ public class Capabilities {
 	}
 	
 	public int getDeviceMode() {
-		System.out.println("getDeviceMode()");
 		String ua = getCapability("useragent");
 		int width = Integer.parseInt(getCapability("screenwidth"));
 		int height = Integer.parseInt(getCapability("screenheight"));

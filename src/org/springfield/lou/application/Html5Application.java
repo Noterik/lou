@@ -275,9 +275,9 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		while(it.hasNext()){
 			String next = it.next();
 			Screen screen = this.screenmanager.get(next);
-			//System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
-			if ((new Date().getTime()-screen.getLastSeen()>12000)) {
-				//System.out.println("PERFORM TIMEOUT ON="+screen.getId());
+			System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
+			if ((new Date().getTime()-screen.getLastSeen()>(3600*12*1000))) { // moved from 12 seconds to 12 hours
+				System.out.println("PERFORM TIMEOUT ON="+screen.getId());
 				String username = screen.getUserName();
 				this.onLogoutUser(screen,username);
 			    it.remove(); // avoids a ConcurrentModificationException
@@ -289,41 +289,6 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 				//System.out.println("Screen ok "+screen.getId());
 			}
 		}
-		/* removed temp 1may2014
-		if(this.screenmanager.size()==0){
-			ApplicationManager.instance().removeApplication(this.id);
-			//System.out.println("removed appliation with id: " + this.id);
-			this.t.stop();
-		}
-		*/
-		
-		// check if we need to simulate connection drops !
-		/*
-		if (fakeconnectionlostcount>0) {
-			fakeconnectionlost++;
-			System.out.println("FAKE DROPCOUNTER="+fakeconnectionlost);
-			if (fakeconnectionlost>fakeconnectionlostcount) {
-				fakeconnectionlost = 0;
-				// drop connections
-				it = keys.iterator();
-				while(it.hasNext()){
-					String next = it.next();
-					Screen screen = this.screenmanager.get(next);
-					// drop connection should not matter client rebuilds !!
-					
-					screen.dropConnection();
-					
-					// force a forget on our side ! 
-					System.out.println("PERFORM FAKE TIMEOUT ON="+screen.getId());
-					String username = screen.getUserName();
-					this.onLogoutUser(screen,username);
-				    it.remove(); // avoids a ConcurrentModificationException
-				    this.removeScreen(next,username);
-				
-				}
-			}
-		}
-		*/
 	}
 	
 	public void shutdown() {
@@ -336,6 +301,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			String username = screen.getUserName();
 			this.onLogoutUser(screen,username);
 			it.remove(); // avoids a ConcurrentModificationException
+			System.out.println("SHUTDOWN");
 			this.removeScreen(next,username);	
 		}
 		ApplicationManager.instance().removeApplication(this.id);
@@ -404,7 +370,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 				if (ts!=null) {
 					ts.setSeen();
 				} else {
-					System.out.println("EMPTY FROM SCREEN = "+from);
+				//	System.out.println("EMPTY FROM SCREEN = "+from);
 				}
 				
 				//System.out.println("FROM="+from+" TARGET="+target+" CONTENT="+content);
@@ -649,6 +615,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	}
 	
 	public void removeScreen(String id,String username){
+		System.out.println("REMOVE SCREEN CALLED");
 		Screen screen = this.screenmanager.get(id);
 //		String username =null;
 		if (screen!=null) username = screen.getUserName();
@@ -839,6 +806,10 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     		return node.checkActions(asker,"application",depth,actions); 
     	}
     	return false;
+	}
+	
+	public String getFavicon() {
+		return null;
 	}
     
     public void log(Screen s,String msg,int level) {

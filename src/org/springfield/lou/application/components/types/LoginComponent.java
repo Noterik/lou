@@ -47,6 +47,7 @@ import org.springfield.mojo.interfaces.ServiceManager;
 public class LoginComponent extends BasicComponent {
 	
 	public void put(String from,String msg) {
+		System.out.println("LOGIN TICKET FROM="+from+" MSG="+msg);
 		Boolean handled = false;
         int pos = msg.indexOf("(");
         if (pos!=-1) {

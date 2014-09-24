@@ -109,14 +109,14 @@ public class LouServlet extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");  
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
-		System.out.println("METHOD="+request.getMethod());
+		//System.out.println("METHOD="+request.getMethod());
 		String mt = request.getContentType();
 		if (mt!=null && mt.indexOf("text/put")!=-1) {
 			doPut(request,response);
 			return;
 		}
 		
-		System.out.println("REQ="+request.getRequestURI()+" PARAMS="+request.getQueryString()+" MT="+request.getContentType());
+		//System.out.println("REQ="+request.getRequestURI()+" PARAMS="+request.getQueryString()+" MT="+request.getContentType());
 		String body = request.getRequestURI();
 		if(request.getParameter("method")!=null) {
 			if(request.getParameter("method").equals("post")){
@@ -131,18 +131,6 @@ public class LouServlet extends HttpServlet {
 			ProxyHandler.get("lou",request,response);
 			return;
 		}
-		
-		/*
-		if (body.startsWith("/lou/proxy/")) {
-			ServiceHandler sh = ServiceHandler.instance();
-			String rbody = sh.get(body,null, null);
-			response.setContentType("text/xml; charset=UTF-8");
-			OutputStream out = response.getOutputStream();
-			out.write(rbody.getBytes());
-			out.close();
-			return;
-		}
-		*/
 		
 		// need to move to be faster
 		String params = request.getQueryString();
@@ -178,48 +166,7 @@ public class LouServlet extends HttpServlet {
 		if (pos!=-1) {
 			doIndexRequest(body,request,response,params);
 		} else {
-		response.setContentType("text/xml; charset=UTF-8");
-		OutputStream out = response.getOutputStream();
-		//PrintWriter out = response.getWriter();
-		String structureXML = "<fsxml>";
-		Iterator it = ApplicationManager.instance().getApplications().keySet().iterator();
-		while(it.hasNext()){
-			String app = (String) it.next();
-			structureXML+="<application id=\""+ApplicationManager.instance().getApplication(app).getFullId()+"\">";
-			structureXML+="<componentManager id=\""+ApplicationManager.instance().getApplication(app).getComponentManager()+"\">";
-			Iterator it2 = ApplicationManager.instance().getApplication(app).getComponentManager().getComponents().keySet().iterator();
-			while(it2.hasNext()){
-				String comp = (String) it2.next();
-				structureXML += "<component id=\""+ApplicationManager.instance().getApplication(app).getComponentManager().getComponent(comp).getId() +"\">";
-				Iterator it3 = ApplicationManager.instance().getApplication(app).getComponentManager().getComponent(comp).getScreenManager().getScreens().keySet().iterator();
-				while(it3.hasNext()){
-					String scr = (String)it3.next();
-					structureXML += "<screen id=\""+ApplicationManager.instance().getApplication(app).getComponentManager().getComponent(comp).getScreenManager().get(scr).getId()+"\">"+ApplicationManager.instance().getApplication(app).getComponentManager().getComponent(comp).getScreenManager().get(scr)+"</screen>";
-				}
-				structureXML += "</component>";
-			}
-			structureXML += "</componentManager>";
-			structureXML+="<screenManager id=\""+ApplicationManager.instance().getApplication(app).getScreenManager()+"\">";
-			Iterator it4 = ApplicationManager.instance().getApplication(app).getScreenManager().getScreens().keySet().iterator();
-			while(it4.hasNext()){
-				String screen = (String) it4.next();
-				structureXML += "<screen id=\""+ApplicationManager.instance().getApplication(app).getScreenManager().get(screen).getId() +"\">";
-				Iterator it5 = ApplicationManager.instance().getApplication(app).getScreenManager().get(screen).getComponentManager().getComponents().keySet().iterator();
-				while(it5.hasNext()){
-					String cmp = (String) it5.next();
-					structureXML += "<component id=\""+ApplicationManager.instance().getApplication(app).getScreenManager().get(screen).getComponentManager().getComponent(cmp).getId()+"\">"+ApplicationManager.instance().getApplication(app).getScreenManager().get(screen).getComponentManager().getComponent(cmp)+"</component>";
-				}
-				structureXML += "</screen>";
-			}
-			structureXML += "</screenManager>";
-			
-			structureXML += "</application>";
-		}
-		structureXML += "</fsxml>";
-		//System.out.print(structureXML);
-		out.write(structureXML.getBytes());
-		
-		out.close();
+			// should we report something back ?
 		}
 		return;
 	}	
@@ -233,10 +180,10 @@ public class LouServlet extends HttpServlet {
 			response.setContentType("text/html; charset=UTF-8");
 			OutputStream out = response.getOutputStream();
 			//PrintWriter out = response.getWriter();
-			System.out.println("INDEX REQ="+request.getRequestURI());
+			//System.out.println("INDEX REQ="+request.getRequestURI());
 			//String params = request.getQueryString();
 			String user = null;
-			String app = "test";
+			String nameapp = "test";
 			
 			int pos = uri.indexOf("/user/");
 			if (pos!=-1) {
@@ -247,11 +194,22 @@ public class LouServlet extends HttpServlet {
 	
 			pos = uri.indexOf("/html5application/");
 			if (pos!=-1) {
-				app = uri.substring(pos+18);
-				app = app.indexOf("?") == -1 ? app : app.substring(0, app.indexOf("?"));
-				if (app.equals("")) app="test";
+				nameapp = uri.substring(pos+18);
+				nameapp = nameapp.indexOf("?") == -1 ? nameapp : nameapp.substring(0, nameapp.indexOf("?"));
+				if (nameapp.equals("")) nameapp="test"; // weird has to be moved to manager only needed for loading of libs
 			}
 			String fullappname = uri.substring(4);
+			Html5ApplicationInterface app = ApplicationManager.instance().getApplication(fullappname);
+			if (app==null) { // no such app is available
+				System.out.println("MISSING APP REQUESTED="+fullappname);
+				String body ="No app under that name found";
+				out.write(body.getBytes());
+				out.flush();
+				out.close();
+				return;
+			}
+			
+			
 			//String body = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
 			//body+="<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
 			// CWI / AngularJS compatible
@@ -260,14 +218,19 @@ public class LouServlet extends HttpServlet {
 			String body = "<!DOCTYPE html PUBLIC \"-//HbbTV//1.1.1//EN\" \"http://www.hbbtv.org/dtd/HbbTV-1.1.1.dtd\">";
 			body += "<html xmlns=\"http://www.w3.org/1999/xhtml\">";
 			body+="<head>\n";
+			//String favicon = "http://www.euscreen.eu/images/favicon.png";
+			String favicon = app.getFavicon();
+			if (favicon!=null) {
+				body+="<link rel=\"icon\" type=\"image/png\" href=\""+favicon+"\"/>";
+			}
 			body+="<meta http-equiv=\"Content-Type\" content=\"application/vnd.hbbtv.xml+xhtml; utf-8\" />";
 			body+="<meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />";
 			body+="<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\" />";
 			body+="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n";
 			body+="<meta name=\"viewport\" content=\"width=device-width, user-scalable = no,initial-scale=1.0; maximum-scale=1.0;\">";
-			body+="<script language=\"javascript\" type=\"text/javascript\">var LouSettings = {\"lou_ip\": \"" + LazyHomer.getExternalIpNumber() + "\", \"lou_port\": \"" + LazyHomer.getBartPort() + "\", \"user\": \"" + user + "\", \"app\": \"" + app + "\", \"fullapp\": \"" + fullappname + "\", \"appparams\": \"" + params + "\"}</script>\n";
+			body+="<script language=\"javascript\" type=\"text/javascript\">var LouSettings = {\"lou_ip\": \"" + LazyHomer.getExternalIpNumber() + "\", \"lou_port\": \"" + LazyHomer.getBartPort() + "\", \"user\": \"" + user + "\", \"app\": \"" + nameapp + "\", \"fullapp\": \"" + fullappname + "\", \"appparams\": \"" + params + "\"}</script>\n";
 			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery-1.8.0.js\"></script>\n";
-			String libs = getLibPaths(app);
+			String libs = getLibPaths(nameapp);
 			if (libs!=null) {
 				String[] l = libs.split(",");
 				for (int i = 0;i<l.length;i++) {
@@ -283,7 +246,7 @@ public class LouServlet extends HttpServlet {
 			
 			//Added by David to test
 			
-			System.out.println("USER-AGENT="+request.getHeader("user-agent"));
+			//System.out.println("USER-AGENT="+request.getHeader("user-agent"));
 			String agent = request.getHeader("user-agent");
 			if (agent != null && agent.indexOf("HbbTV/1.1.1")==-1) {
 				body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/eddie.js?cache\"></script>\n";
@@ -375,38 +338,6 @@ public class LouServlet extends HttpServlet {
 		if (pos!=-1) {
 			String tappname = url.substring(pos);
 			app = ApplicationManager.instance().getApplication(tappname);
-
-			if (app==null && ApplicationManager.instance().getAvailableApplicationByInstance(tappname)!=null) {
-				app = ApplicationManager.instance().getLoadedApplication(tappname);
-				String fullid = url.substring(url.indexOf("/domain/"));
-				app.setFullId(fullid);
-				ApplicationManager.instance().addApplication(app);
-			} else if (app==null) {
-				try {
-					String classname = "org.springfield.lou.application.types.";
-					pos = tappname.indexOf("/html5application/");
-					if (pos!=-1) {
-						String apppart = tappname.substring(pos+18);
-						pos = apppart.indexOf("/");
-					    if (pos!=-1) {
-					    	apppart = apppart.substring(0,pos);
-					    }
-					    classname += apppart.substring(0,1).toUpperCase();
-					    classname += apppart.substring(1) + "Application";
-					}
-					//System.out.println("WANT CLASS="+classname);
-					Object o = Class.forName(classname).getConstructor(String.class).newInstance(tappname);
-					app = (Html5ApplicationInterface)o;
-					String fullid = url.substring(url.indexOf("/domain/"));
-					app.setFullId(fullid);
-					//System.out.println("ADDING APP="+app);
-					ApplicationManager.instance().addApplication(app);
-				} catch(Exception e) {
-					
-				}
-			}
-			
-			
 		}
 		
 		if (data.indexOf("put(")==0) {
@@ -415,6 +346,7 @@ public class LouServlet extends HttpServlet {
 		}
 		
 		if (data.indexOf("stop(")==0) {
+			System.out.println("RECIEVED STOP FROP CLIENT");
 			String screenid = data.substring(5,data.length()-1);
 			app.removeScreen(screenid,null);
 			return;
@@ -469,7 +401,7 @@ public class LouServlet extends HttpServlet {
 				out.close();
 				
 			} else {
-				//System.out.println("screenId="+screenId);
+				System.out.println("lost flow why ? screenId="+screenId+" "+app.getScreen(screenId));
 				if (!screenId.equals("-1")) {
 					System.out.println("Sending stop");
 					response.setContentType("text/xml; charset=UTF-8");
@@ -519,6 +451,7 @@ public class LouServlet extends HttpServlet {
 	}
 	
 	private String[] urlMappingPerApplication(String host,String inurl) {
+		System.out.println("HOST="+host+" URL="+inurl);
 		Iterator it = urlmappings.keySet().iterator();
 		while(it.hasNext()){
 			String mapurl = (String) it.next();

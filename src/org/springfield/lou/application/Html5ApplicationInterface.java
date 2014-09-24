@@ -81,4 +81,5 @@ public interface Html5ApplicationInterface {
 	public void subscribe(String node, FSXMLStrainer strainer);
 	public void unsubscribe(String node);
 	public FsNode getNode(String path);
+	public String getFavicon();
 }

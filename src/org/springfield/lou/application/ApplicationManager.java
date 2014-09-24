@@ -124,13 +124,52 @@ public class ApplicationManager extends Thread implements MargeObserver {
     }
     
     public Html5ApplicationInterface getApplication(String name) {
-    		return runningapps.get(name);
+    		Html5ApplicationInterface app = runningapps.get(name);
+    		if (app!=null) {
+    			return app;
+    		} 
+    		// lets try to create this app
+    		app = getLoadedApplication(name);
+    		if (app!=null) {
+    			app.setFullId(name);
+    			addApplication(app);
+    		}
+    		
+    		// maybe they are trying to load a dashboard app ?
+    		if (name.indexOf("/dashboard")!=-1) {
+    			app = loadDashboardApp(name);
+    		}
+    		System.out.println("DAN_END="+app);
+    		return app;
     }
     
+    private Html5ApplicationInterface loadDashboardApp(String tappname) {
+    	Html5ApplicationInterface app = null;
+		String classname = "org.springfield.lou.application.types.";
+		int pos = tappname.indexOf("/html5application/");
+		if (pos!=-1) {
+			String apppart = tappname.substring(pos+18);
+			pos = apppart.indexOf("/");
+		    if (pos!=-1) {
+		    	apppart = apppart.substring(0,pos);
+		    }
+		    classname += apppart.substring(0,1).toUpperCase();
+		    classname += apppart.substring(1) + "Application";
+		}
+		try {
+			System.out.println("WANT CLASS="+classname);
+			Object o = Class.forName(classname).getConstructor(String.class).newInstance(tappname);
+			app = (Html5ApplicationInterface)o;
+			app.setFullId(tappname);
+			addApplication(app);
+		} catch(Exception e) {
+			
+		}
+		return app;
+    }
+    
+     
     public Html5ApplicationInterface getLoadedApplication(String name) {
-    	//System.out.println("DYNAMIC LOADING WANTED FOR "+name);
-    	Html5ApplicationInterface app=getApplication(name);
-    	if (app!=null) return app;
     	
     	// so lets see what version is in production !
     	ApplicationClassLoader cl = new ApplicationClassLoader();
