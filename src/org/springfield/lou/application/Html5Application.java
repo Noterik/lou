@@ -275,9 +275,9 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		while(it.hasNext()){
 			String next = it.next();
 			Screen screen = this.screenmanager.get(next);
-			System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
+			//System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
 			if ((new Date().getTime()-screen.getLastSeen()>(3600*12*1000))) { // moved from 12 seconds to 12 hours
-				System.out.println("PERFORM TIMEOUT ON="+screen.getId());
+				//System.out.println("PERFORM TIMEOUT ON="+screen.getId());
 				String username = screen.getUserName();
 				this.onLogoutUser(screen,username);
 			    it.remove(); // avoids a ConcurrentModificationException
