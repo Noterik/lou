@@ -21,11 +21,14 @@ var Eddie = function(options){
 	self.init = function(){
 		if(typeof(Worker) != "undefined"){
 			settings.worker = new Worker(settings.worker_location);
+  		}else{
+  			console.log("Worker not supported");
   		}
 		
 		$(self).on('register-success', self.listen);
 		register();
 		addGestureEvents();
+		
 	}
 	
 	self.destroy = function() {
@@ -38,13 +41,18 @@ var Eddie = function(options){
 		
 		self.putLou('notification','show(user ' + splits[splits.length - 1] + ' left session!)');
 		var postData = "stop(" + settings.screenId + ")";
-		$.ajax({
-			'type': 'PUT',
+		var args = 
+		self.doRequest({
+			'type': 'POST',
 			'url': "http://" + settings.lou_ip + ":" + settings.lou_port + "/lou/LouServlet" + settings.fullapp,
 			'data': postData,
 			'dataType': 'text',
 			'async': false
-		})
+		});
+	}
+	
+	self.doRequest = function(args){
+		$.ajax(args);	
 	}
 	
 	self.getComponent = function(comp){
@@ -95,8 +103,8 @@ var Eddie = function(options){
 	
 	self.putLou = function(targetid, content, sync) {
 		var postData = "put(" + settings.screenId + "," + targetid + ")=" + content;
-		$.ajax({
-			'type': 'PUT',
+		self.doRequest({
+			'type': 'POST',
 			'url': 'http://' + settings.lou_ip + ":" + settings.lou_port + "/lou/LouServlet" + settings.fullapp,
 			'contentType': 'text/plain',
 			'data': postData,
@@ -112,8 +120,8 @@ var Eddie = function(options){
 			settings.screenId = $(response).find('screenid').first().text();
 			$(self).trigger('register-success');
 		}
-		$.ajax({
-			'type': 'PUT',
+		self.doRequest({
+			'type': 'POST',
 			'url': 'http://' + settings.lou_ip +":"+ settings.lou_port + '/lou/LouServlet' + settings.fullapp+"?"+settings.appparams,
 			'data': settings.postData,
 			'success': parseRegisterResponse
@@ -124,15 +132,16 @@ var Eddie = function(options){
 		var putData = "<fsxml><screen><properties><screenId>" + settings.screenId + "</screenId></properties></screen></fsxml>";
 		var appId = settings.screenId.substring(0, settings.screenId.indexOf("/1/screen"));
 
-		$.ajax({
-			'type': 'PUT',
+		self.doRequest({
+			'type': 'POST',
 			'url': 'http://' + settings.lou_ip + ':' + settings.lou_port + '/lou/LouServlet' + appId,
 			'data': putData,
 			'dataType': 'text',
 			'contentType': 'text/plain',
-		}).done(function(data){
-			$(self).trigger('request-success', data)
-		})
+			'success': function(data){
+				$(self).trigger('request-success', data)
+			}
+		});
 	}
 	
 	var parseResponse = function(response){
@@ -147,7 +156,7 @@ var Eddie = function(options){
 			pos = result.indexOf(")");
 			
             var targetid = result.substring(0,pos);
-   
+
             switch(command){
             	case "set":
             		var content = result.substring(pos+2);
@@ -264,7 +273,7 @@ var Eddie = function(options){
 				};
 			}
 		}catch(e){ console.log("escaped: " + content);}
-
+		
 		content = new_content;
 		var div = document.getElementById(targetid);
 		if(components[targetid]){

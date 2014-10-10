@@ -230,6 +230,7 @@ public class LouServlet extends HttpServlet {
 			body+="<meta name=\"viewport\" content=\"width=device-width, user-scalable = no,initial-scale=1.0; maximum-scale=1.0;\">";
 			body+="<script language=\"javascript\" type=\"text/javascript\">var LouSettings = {\"lou_ip\": \"" + LazyHomer.getExternalIpNumber() + "\", \"lou_port\": \"" + LazyHomer.getBartPort() + "\", \"user\": \"" + user + "\", \"app\": \"" + nameapp + "\", \"fullapp\": \"" + fullappname + "\", \"appparams\": \"" + params + "\"}</script>\n";
 			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery-1.8.0.js\"></script>\n";
+			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery.xdomainrequest.min.js\"></script>\n";
 			String libs = getLibPaths(nameapp);
 			if (libs!=null) {
 				String[] l = libs.split(",");
