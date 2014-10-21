@@ -588,14 +588,14 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	
 	public void removeComponentFromScreen(String comp, Screen sc){
 		try{
-		sc.getComponentManager().removeComponent(comp);
-		}catch(java.lang.NullPointerException e){
-			e.printStackTrace();
+			sc.getComponentManager().removeComponent(comp);
+		}catch(Exception e){
+			//e.printStackTrace();
 		}
 		try{
 			this.componentmanager.getComponent(comp).getScreenManager().remove(sc.getId());
-		}catch(java.lang.NullPointerException e){
-			e.printStackTrace();
+		}catch(Exception e){
+			//e.printStackTrace();
 		}
 		
 		try{
@@ -608,8 +608,8 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			}
 			
 			this.componentmanager.removeComponent(this.componentmanager.getComponent(comp).getId());
-		}catch(java.lang.NullPointerException e){
-			e.printStackTrace();
+		}catch(Exception e){
+			//e.printStackTrace();
 		}
 		
 	}
