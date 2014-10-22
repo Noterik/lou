@@ -34,4 +34,9 @@
 	    <servlet-name>LouServlet</servlet-name>
 	    <url-pattern>/*</url-pattern>
 	</servlet-mapping> 
+	
+	<mime-mapping>
+    	<extension>vtt</extension>
+    	<mime-type>text/vtt</mime-type>
+  	</mime-mapping>
 </web-app>
