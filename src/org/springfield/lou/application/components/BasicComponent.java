@@ -92,12 +92,23 @@ public class BasicComponent extends Observable implements ComponentInterface, Ob
 			System.out.println("GETDATA CONTENT:: " + content);
 		}
 		//System.out.println("sending message: "+content);
+		
+		String[] sr = new String[sm.getScreens().keySet().size()];
+		sr = sm.getScreens().keySet().toArray(sr);
+		for(String s : sr) {
+		  //  System.out.println(s);
+			Screen t = sm.get(s);
+			if (t!=null) t.putMsg(id,from,content);
+		}
+		
+		/*
 		Iterator<String> it = this.sm.getScreens().keySet().iterator();
 		while(it.hasNext()){
 			String next = (String) it.next();
 		//	System.out.println("ID="+id+"F="+from+" C="+content);
 			this.sm.get(next).putMsg(id,from,content);
-		}		
+		}	
+		*/	
 	}
 	
 	public void putOnScope(Screen scopescreen,String from,String content) {

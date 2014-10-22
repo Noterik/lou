@@ -80,14 +80,14 @@ public class ActionList {
 			String cmd = parts[0];
 			String value = parts[1];
 			if (cmd.equals("device")) {
-				System.out.println("DEVICE="+value);
+				//System.out.println("DEVICE="+value);
 				if (value.equals("desktop") && cap.getDeviceMode()==cap.MODE_GENERIC) return true;
 				if (value.equals("ipad") && cap.getDeviceMode()==cap.MODE_IPAD_LANDSCAPE) {
 					System.out.println("IPAD");
 					return true;
 				}
 				if (value.equals("ipad") && cap.getDeviceMode()==cap.MODE_IPAD_PORTRAIT) {
-					System.out.println("IPAD");
+					//System.out.println("IPAD");
 					return true;
 				}
 				if (value.equals("atablet") && cap.getDeviceMode()==cap.MODE_ATABLET_LANDSCAPE) return true;

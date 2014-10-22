@@ -109,7 +109,7 @@ public class LouServlet extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");  
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
-		//System.out.println("METHOD="+request.getMethod());
+		System.out.println("METHOD="+request.getMethod()+" "+request.getRequestURI());
 		String mt = request.getContentType();
 		if (mt!=null && mt.indexOf("text/put")!=-1) {
 			doPut(request,response);
@@ -330,6 +330,8 @@ public class LouServlet extends HttpServlet {
 		java.util.Scanner s = new java.util.Scanner(inst).useDelimiter("\\A");
 		data = (s.hasNext()) ? s.next() : null;
 		
+		if (data==null) return;
+		
 		//System.out.println("DATA="+data);
 
 		Map<String,String[]> params = request.getParameterMap();
@@ -453,7 +455,7 @@ public class LouServlet extends HttpServlet {
 	}
 	
 	private String[] urlMappingPerApplication(String host,String inurl) {
-		System.out.println("HOST="+host+" URL="+inurl);
+		//System.out.println("HOST="+host+" URL="+inurl);
 		Iterator it = urlmappings.keySet().iterator();
 		while(it.hasNext()){
 			String mapurl = (String) it.next();

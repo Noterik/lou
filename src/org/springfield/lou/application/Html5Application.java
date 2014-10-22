@@ -220,9 +220,9 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	}
 	
 	public void executeActionlist(Screen s,String name) {
-		System.out.println("executeActionlist()");
-		System.out.println(s);
-		System.out.println(name);
+		//System.out.println("executeActionlist()");
+		//System.out.println(s);
+		//System.out.println(name);
 		actionlistmanager.executeList(s, name);
 	}
 	
@@ -276,7 +276,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			String next = it.next();
 			Screen screen = this.screenmanager.get(next);
 			//System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
-			if ((new Date().getTime()-screen.getLastSeen()>(3600*12*1000))) { // moved from 12 seconds to 12 hours
+			if ((new Date().getTime()-screen.getLastSeen()>(3600*1*1000))) { // moved from 12 seconds to 12 hours
 				//System.out.println("PERFORM TIMEOUT ON="+screen.getId());
 				String username = screen.getUserName();
 				this.onLogoutUser(screen,username);
@@ -689,16 +689,16 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	
     public String getApplicationCSS(String name) {
     	// weird for now.
-    	System.out.println("CSS NAME="+name);
+    	//System.out.println("CSS NAME="+name);
     	String path = "apps/"+appname+"/css/"+name+".css";
     	return path;
      }
     
     public String getApplicationCSSRefer(String refcss,String refappname) {
     	// weird for now.
-    	System.out.println("CSS NAME="+refcss);
+    	//System.out.println("CSS NAME="+refcss);
 		String path = "apps/"+refappname+"/css/"+refcss+".css";
-		System.out.println("REFERID CSS !!!!="+path);
+		//System.out.println("REFERID CSS !!!!="+path);
 		return path;
     }
 
