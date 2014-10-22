@@ -111,7 +111,7 @@ public class Capabilities {
 				}	
 			} else if (ua.indexOf("Android")!=-1) {
 				String o = getCapability("orientation");
-				System.out.println("OOO="+o);
+				//System.out.println("OOO="+o);
 				
 				if(o.equals("undefined")){
 					if(height > width){
