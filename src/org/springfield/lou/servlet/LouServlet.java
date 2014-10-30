@@ -99,7 +99,8 @@ public class LouServlet extends HttpServlet {
 	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.addHeader("Access-Control-Allow-Origin", "*");  
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
-		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Range,If-None-Match,Accept-Ranges");
+		response.addHeader("Access-Control-Expose-Headers", "Content-Range");
 	}
 
 	/**
@@ -108,7 +109,8 @@ public class LouServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.addHeader("Access-Control-Allow-Origin", "*");  
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
-		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Range,If-None-Match,Accept-Ranges");
+		response.addHeader("Access-Control-Expose-Headers", "Content-Range");
 		System.out.println("METHOD="+request.getMethod()+" "+request.getRequestURI());
 		String mt = request.getContentType();
 		if (mt!=null && mt.indexOf("text/put")!=-1) {
@@ -175,7 +177,8 @@ public class LouServlet extends HttpServlet {
 		try {	
 			response.addHeader("Access-Control-Allow-Origin", "*");  
 			response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
-			response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+			response.addHeader("Access-Control-Allow-Headers", "Content-Type,Range,If-None-Match,Accept-Ranges");
+			response.addHeader("Access-Control-Expose-Headers", "Content-Range");
 			
 			response.setContentType("text/html; charset=UTF-8");
 			OutputStream out = response.getOutputStream();
@@ -318,7 +321,8 @@ public class LouServlet extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.addHeader("Access-Control-Allow-Origin", "*");  
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
-		response.addHeader("Access-Control-Allow-Headers", "Content-Type");
+		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Range,If-None-Match,Accept-Ranges");
+		response.addHeader("Access-Control-Expose-Headers", "Content-Range");
 		//read the data from the put request
 		
 		//System.out.println("PUT REQ="+request.getRequestURI());
