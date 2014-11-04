@@ -334,7 +334,9 @@ public class LouServlet extends HttpServlet {
 		java.util.Scanner s = new java.util.Scanner(inst).useDelimiter("\\A");
 		data = (s.hasNext()) ? s.next() : null;
 		
-		if (data==null) return;
+		if (data==null) {
+			return;
+		}
 		
 		//System.out.println("DATA="+data);
 
@@ -389,7 +391,8 @@ public class LouServlet extends HttpServlet {
 				if (msg==null) { // bad bad bad
 					try {
 						synchronized (screen) {
-							screen.wait();
+							//screen.wait();
+							screen.wait(60*1000);
 						}
 					} catch (InterruptedException e) {
 						//	System.out.println("got interrupt.. getting data");

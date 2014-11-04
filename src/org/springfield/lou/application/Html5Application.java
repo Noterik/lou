@@ -276,7 +276,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			String next = it.next();
 			Screen screen = this.screenmanager.get(next);
 			//System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
-			if ((new Date().getTime()-screen.getLastSeen()>(3600*1*1000))) { // moved from 12 seconds to 12 hours
+			if ((new Date().getTime()-screen.getLastSeen()>(600*1000))) { // moved from 12 seconds to 12 hours
 				//System.out.println("PERFORM TIMEOUT ON="+screen.getId());
 				String username = screen.getUserName();
 				this.onLogoutUser(screen,username);
