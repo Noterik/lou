@@ -22,6 +22,7 @@
 package org.springfield.lou.application.components.types;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +88,7 @@ public class OpenappsComponent extends BasicComponent {
 		body += "<tr><th>screen id</th><th>username</th><th>screen role</th><th>components</th><th>details</th></tr>";
 
 		Html5ApplicationInterface app = ApplicationManager.instance().getApplication(appid);
-		
+		System.out.println("OPENAPP="+app);
 		Set<String> keys = app.getScreenManager().getScreens().keySet();
 		Iterator<String> it = keys.iterator();
 		while(it.hasNext()){
@@ -101,7 +102,7 @@ public class OpenappsComponent extends BasicComponent {
 			body +="<td>"+username+"</td>";
 			body +="<td>"+s.getRole()+"</td>";
 			body +="<td>"+s.getComponentManager().size()+"</td>";
-			body +="<td></td></tr>";
+			body +="<td>"+(new Date().getTime()-s.getLastSeen())/1000+"</td></tr>";
 		}
 		body += "</table></div>";		
 

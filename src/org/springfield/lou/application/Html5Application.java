@@ -254,32 +254,29 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	public void run() {
 		while(running){
 			try {
-				Thread.sleep(1000);
-				if (timeoutcheck) {
-					//System.out.println("APP THREAD RUN");
+					Thread.sleep(10000);
 					this.maintainanceRun();
-				} else {
 					this.timeoutCheckup();
-				}
-				timeoutcheck = !timeoutcheck;
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("Exception in run() application");
 			}
 		}
+		System.out.println("application run done, shutting down");
 	}
 	
 	public void timeoutCheckup() {
 		//System.out.println("timeoutCheckup()");
 		Set<String> keys = this.screenmanager.getScreens().keySet();
+		System.out.println("timeoutCheckup() "+keys.size()+" "+this.getFullId()+" this="+this);
 		Iterator<String> it = keys.iterator();
 		while(it.hasNext()){
 			String next = it.next();
 			Screen screen = this.screenmanager.get(next);
-			//System.out.println("TIME="+(new Date().getTime()-screen.getLastSeen()));
-			if ((new Date().getTime()-screen.getLastSeen()>(600*1000))) { // moved from 12 seconds to 12 hours
-				//System.out.println("PERFORM TIMEOUT ON="+screen.getId());
+			if ((new Date().getTime()-screen.getLastSeen()>(60*1000))) { // moved from 12 seconds to 12 hours
 				String username = screen.getUserName();
-				this.onLogoutUser(screen,username);
+				if (username!=null) {
+					this.onLogoutUser(screen,username);
+				}
 			    it.remove(); // avoids a ConcurrentModificationException
 			    this.removeScreen(next,username);
 				//if(this.screenmanager.size()==0){
@@ -308,13 +305,17 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	}
 	
 	public void maintainanceRun() {
-			if (!running) return;
-			Set<String> keys = this.screenmanager.getScreens().keySet();
-			Iterator<String> it = keys.iterator();
-			while(it.hasNext()){
-				String next = it.next();
-				Screen s = this.screenmanager.get(next);
-				s.setContent("synctime",new Date().toString());
+			try {
+				if (!running) return;
+				Set<String> keys = this.screenmanager.getScreens().keySet();
+				Iterator<String> it = keys.iterator();
+				while(it.hasNext()){
+					String next = it.next();
+					Screen s = this.screenmanager.get(next);
+					s.setContent("synctime",new Date().toString());
+				}
+			} catch(Exception e) {
+				System.out.println("Exception in maintainance run");
 			}
 	}
 	
