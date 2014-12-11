@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.components.ComponentManager;
 import org.springfield.lou.application.components.types.proxy.RemoteProxy;
@@ -823,6 +825,10 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	
 	public String getFavicon() {
 		return null;
+	}
+	
+	public String getMetaHeaders(HttpServletRequest request) {
+		return ""; // default is empty;
 	}
     
     public void log(Screen s,String msg,int level) {

@@ -23,6 +23,8 @@ package org.springfield.lou.application;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.components.ComponentManager;
 import org.springfield.lou.screen.*;
@@ -82,4 +84,5 @@ public interface Html5ApplicationInterface {
 	public void unsubscribe(String node);
 	public FsNode getNode(String path);
 	public String getFavicon();
+	public String getMetaHeaders(HttpServletRequest request);
 }
