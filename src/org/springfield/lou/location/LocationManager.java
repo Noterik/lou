@@ -52,7 +52,7 @@ public class LocationManager {
     	return openlocations;
     }
     
-    public int size(){
+    public static int size(){
     	return openlocations.size();
     }
 }

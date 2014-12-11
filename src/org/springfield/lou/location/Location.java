@@ -33,11 +33,11 @@ import org.springfield.lou.screen.Screen;
  */
 public class Location {
 	private String id;
-	private Screen screen;
+//	private Screen screen;
 	
-	public Location(String i,Screen s){
+	public Location(String i){
 		id = i;
-		screen = s;
+	//	screen = s;
 	}
 	
 	public String getId() {

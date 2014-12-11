@@ -81,6 +81,7 @@ public class User {
 	 * @param caps the capabilities object to be associated with this screen
 	 */
 	public void addScreen(Screen s){
+		System.out.println("USER ADDSCREEN");
 		screens.put(s.getId(),  s);
 	}
 	

@@ -31,10 +31,14 @@ import java.util.*;
  *
  */
 public class ScreenManager {
+	// we also keep track of all the instances so we can do a cascading delete on all managers if needed of screens
+	private static ArrayList<ScreenManager>managers = new ArrayList<ScreenManager>();
 	private Map<String, Screen> openscreens;
 	
     public ScreenManager() {
     	openscreens = new HashMap<String, Screen>();
+    	// add manager to instances we might need them for global actions
+    	managers.add(this);	
     }
     
     public void put(Screen s) {
@@ -42,8 +46,15 @@ public class ScreenManager {
     	this.openscreens.put(s.getId(),s);
     }
     
+    public static void globalremove(String id) {
+		for (int i=0;i<managers.size();i++) {
+			ScreenManager m = managers.get(i);
+			m.remove(id);
+		}    	
+    }
+    
     public void remove(String id){
-    	//System.out.println("REMOVE SCREEN="+id);
+    	System.out.println("REMOVE SCREEN="+id+" on "+this+" screens left="+openscreens.size());
     	this.openscreens.remove(id);
     }
     

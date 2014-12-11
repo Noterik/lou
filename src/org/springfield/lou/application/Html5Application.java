@@ -171,8 +171,8 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		Long newid = new Date().getTime();
 		screencounter++;
 		Screen screen = new Screen(this,caps,id+"/1/screen/"+newid);
+		System.out.println("NEW SCREEN="+this+" "+this.getAppname()+" "+this.getId()+" "+screencounter);
 
-//		Screen screen = new Screen(this,caps,id+"/1/screen/"+screencounter++);
 		screen.setParameters(p); // this can also be used to set location ?
 	//	System.out.println("CAP IP="+caps.getCapability("ipnumber"));
 	//	System.out.println("BROWSER ID="+caps.getCapability("smt_browserid"));
@@ -181,14 +181,16 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		if (location_scope.equals("browserid")) {
 			String loc = caps.getCapability("smt_browserid");
 			if (loc!=null)  {
-				Location nloc = new Location(loc, screen);
+				//Location nloc = new Location(loc, screen);
+				Location nloc = new Location(loc);
 				LocationManager.put(nloc);
 				screen.setLocation(nloc);
 			}
 		} else if (location_scope.equals("ipnumber")) {
 			String loc = caps.getCapability("ipnumber");
 			if (loc!=null)  {
-				Location nloc = new Location(loc, screen);
+				//Location nloc = new Location(loc, screen); // problemdaniel
+				Location nloc = new Location(loc); // problemdaniel
 				LocationManager.put(nloc);
 				screen.setLocation(nloc);
 			}
@@ -196,7 +198,9 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 			String loc = screen.getId();
 			//System.out.println("SCREEN LOC ID="+loc);
 			if (loc!=null)  {
-				Location nloc = new Location(loc, screen);
+				//Location nloc = new Location(loc, screen);
+				Location nloc = new Location(loc);
+
 				LocationManager.put(nloc);
 				screen.setLocation(nloc);
 			}
@@ -257,8 +261,9 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 					Thread.sleep(10000);
 					this.maintainanceRun();
 					this.timeoutCheckup();
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				System.out.println("Exception in run() application");
+				e.printStackTrace();
 			}
 		}
 		System.out.println("application run done, shutting down");
@@ -616,19 +621,26 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	}
 	
 	public void removeScreen(String id,String username){
-		System.out.println("REMOVE SCREEN CALLED");
 		Screen screen = this.screenmanager.get(id);
 //		String username =null;
-		if (screen!=null) username = screen.getUserName();
-		this.screenmanager.remove(id);
+		if (screen!=null) {
+			username = screen.getUserName();
+			Location nloc = screen.getLocation();
+			if (nloc!=null) {
+				LocationManager.remove(nloc.getId());
+				System.out.println("location remove = "+nloc.getId()+" "+LocationManager.size());
+			}
+		}
+		ScreenManager.globalremove(id);
+		System.out.println("REMOVE SCREEN CALLED SIZE="+this.screenmanager.size());
 		Iterator<String> it = this.componentmanager.getComponents().keySet().iterator();
 		while(it.hasNext()){
 			this.componentmanager.getComponent((String)it.next()).getScreenManager().remove(id);
 		}
 		onScreenTimeout(screen);
-		if(this.screenmanager.size()==0){
-			this.screencounter = 1;
-		}
+		//if(this.screenmanager.size()==0){
+		//	this.screencounter = 1;
+		//}
 
 		if (username!=null) {
 			User u = usermanager.getUser(username);

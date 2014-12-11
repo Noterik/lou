@@ -113,7 +113,7 @@ public class LouServlet extends HttpServlet {
 		response.addHeader("Access-Control-Expose-Headers", "Content-Range");
 		System.out.println("METHOD="+request.getMethod()+" "+request.getRequestURI());
 		String mt = request.getContentType();
-		if (mt!=null && mt.indexOf("text/put")!=-1) {
+		if (mt!=null && mt.indexOf("text/put")!=-1) { // need to check who made this and why (daniel)
 			doPut(request,response);
 			return;
 		}
@@ -162,10 +162,17 @@ public class LouServlet extends HttpServlet {
 				}
 			}
 		}
+		
 		//System.out.println("PARAMS2="+params);
 		
 		int pos = body.indexOf("/html5application/");
 		if (pos!=-1) {
+			pos = body.indexOf("/lou/domain/");
+			if (pos!=0) {
+				System.out.println("Fixedget="+body);
+				body = body.substring(pos);
+				System.out.println("Fixedout="+body);
+			}
 			doIndexRequest(body,request,response,params);
 		} else {
 			// should we report something back ?
