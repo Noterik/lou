@@ -85,4 +85,5 @@ public interface Html5ApplicationInterface {
 	public FsNode getNode(String path);
 	public String getFavicon();
 	public String getMetaHeaders(HttpServletRequest request);
+	public Boolean externalGainEvent(HttpServletRequest request,String data);
 }

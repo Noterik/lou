@@ -4,6 +4,9 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.springfield.fs.FsNode;
 import org.springfield.lou.screen.Capabilities;
@@ -56,14 +59,17 @@ public class ActionList {
 					else if (action.equals("loadcontent"))	{ handleLoadContent(s,cmd[1],cmd[2]); }
 					else if (action.equals("removecontent"))	{ handleRemoveContent(s,cmd[1],cmd[2]); }
 					else if (action.equals("setcontent"))	{ handleSetContent(s,cmd[1],cmd[2],cmd[3]); }
+					else if (action.equals("setdiv"))	{ handleSetDiv(s,cmd[1],cmd[2],cmd[3]); }
 					else if (action.equals("log"))	{ 
-							System.out.println("LOG="+action+" cmdl="+cmd.length);
-							if (cmd.length>2) { 
-								handleLog(s,cmd[1],cmd[2]); 
+							//System.out.println("LOG="+action+" cmdl="+cmd.length);
+							String msg = replaceParams(cmd[1],content);
+							if (cmd.length>2) {
+								handleLog(s,msg,cmd[2]); 
 							} else { 
-								handleLog(s,cmd[1]); 
+								handleLog(s,msg); 
 							}
-					} else if (action.equals("callserver"))	{ handleCallServer(s,cmd[1],cmd[2],content);
+					} else if (action.equals("callserver"))	{ 
+						handleCallServer(s,cmd[1],cmd[2],content);
 					} else {
 						System.out.println("unknown action command : "+action+" content="+content);
 					}
@@ -163,10 +169,18 @@ public class ActionList {
 		}
 	}
 	
+
+	
 	private void handleSetContent(Screen s,String scope,String name,String body) {
 		// example : setcontent,defaultoutput,"Website app main"
 		if (scope.equals("screen")) {
 			s.setContent(name,body.substring(1, body.length()-1));
+		}
+	}
+	
+	private void handleSetDiv(Screen s,String scope,String name,String body) {
+		if (scope.equals("screen")) {
+			s.setDiv(name,body.substring(1, body.length()-1));
 		}
 	}
 	
@@ -195,6 +209,36 @@ public class ActionList {
 			n.setProperty("user", "unknown");
 		}
 		ApplicationManager.log(app,n);
+    }
+    
+    private String replaceParams(String result,String content) {
+    	System.out.println("result="+result+" params="+content);
+    	
+    	// if there is no $ in the command why decode the params?
+    	int pos = result.indexOf("$");
+    	if (pos!=-1) {
+			String[] p = content.split(",");
+			Map<String, String> params = new HashMap<String, String>();
+			for (int i=0;i<p.length;i++) {
+				String par  = p[i];
+				int pos2 = par.indexOf("=");
+				if (pos2!=-1) {
+					String name = par.substring(0,pos2);
+					String value = par.substring(pos2+1);
+					System.out.println("NAME="+name+" VALUE="+value);
+					params.put(name, value);
+				}
+			}
+			// params are decoded lets see if we can replace things in the input
+			for(Iterator<String> iter = params.keySet().iterator(); iter.hasNext(); ) {
+				String pkey = (String)iter.next();
+				String pvalue = params.get(pkey);
+				result = result.replace("$"+pkey, pvalue);
+			}
+			System.out.println("result2="+result);
+			
+    	}
+    	return result;
     }
 	
 	
