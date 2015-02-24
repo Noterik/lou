@@ -22,7 +22,10 @@
 package org.springfield.lou.application;
 
 import java.io.*;
+import java.security.*;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.PropertyPermission;
 import java.util.jar.*;
 
 /**
@@ -33,11 +36,15 @@ import java.util.jar.*;
  * @package org.springfield.lou.application
  *
  */
-public class ApplicationClassLoader extends ClassLoader {
+//public class ApplicationClassLoader extends ClassLoader {
+public class ApplicationClassLoader extends SecureClassLoader {
 
+	
 	private String jarFile;
-
 	private Hashtable<String, Class<?>> classes = new Hashtable<String, Class<?>>(); 
+	
+	public ApplicationClassLoader() {
+	}
 	   
 	public void setJarName(String appname,String id) { // e.g. 23-Aug-2013-22:12
 		int pos = appname.indexOf("html5application/");
@@ -46,6 +53,18 @@ public class ApplicationClassLoader extends ClassLoader {
 	}
 	    
 	public Class<?> findClass(String className) {
+		
+		PermissionCollection perm = this.getPermissions(null);
+		System.out.println("PERM="+perm);
+		
+		Enumeration<Permission> pi = perm.elements();
+
+		while(pi.hasMoreElements()){
+			Permission p = pi.nextElement();
+			System.out.println("PERMC="+p.getName());
+		}
+		
+		
 		int pos = className.indexOf("html5application/");
         if (pos!=-1) {     
         	String namepart = (""+className.charAt(pos+17)).toUpperCase();
@@ -92,6 +111,7 @@ public class ApplicationClassLoader extends ClassLoader {
             classByte = byteStream.toByteArray(); 
            
             result = defineClass(className, classByte, 0, classByte.length);
+
             classes.put(className, result);  
             return result;  
         } catch (Exception e) {  

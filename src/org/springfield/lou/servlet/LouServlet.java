@@ -242,6 +242,9 @@ public class LouServlet extends HttpServlet {
 			body+="<script type=\"text/javascript\">if (!window.console) window.console = {};if (!window.console.log) window.console.log = function () { };</script>";
 			body+="<script language=\"javascript\" type=\"text/javascript\">var LouSettings = {\"lou_ip\": \"" + LazyHomer.getExternalIpNumber() + "\", \"lou_port\": \"" + LazyHomer.getBartPort() + "\", \"user\": \"" + user + "\", \"app\": \"" + nameapp + "\", \"fullapp\": \"" + fullappname + "\", \"appparams\": \"" + params + "\"}</script>\n";
 			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery-1.8.0.js\"></script>\n";
+			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"http://code.jquery.com/ui/1.11.2/jquery-ui.js\"></script>\n";
+			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery.ui.touch-punch.min.js\"></script>\n";
+			
 			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery.xdomainrequest.min.js\"></script>\n";
 			String libs = getLibPaths(nameapp);
 			if (libs!=null) {
@@ -362,6 +365,16 @@ public class LouServlet extends HttpServlet {
 			app.putData(data);
 			return;
 		}
+		
+		String gaintest = request.getParameter("type");
+		
+		if (gaintest!=null && gaintest.equals("gain")) {
+			System.out.println("GAINDATA="+data);
+			app.externalGainEvent(request, data);
+			return;
+		}
+		
+		
 		
 		if (data.indexOf("stop(")==0) {
 			System.out.println("RECIEVED STOP FROP CLIENT");

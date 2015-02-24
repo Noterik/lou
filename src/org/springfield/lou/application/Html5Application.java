@@ -274,7 +274,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	public void timeoutCheckup() {
 		//System.out.println("timeoutCheckup()");
 		Set<String> keys = this.screenmanager.getScreens().keySet();
-		System.out.println("timeoutCheckup() "+keys.size()+" "+this.getFullId()+" this="+this);
+		//System.out.println("timeoutCheckup() "+keys.size()+" "+this.getFullId()+" this="+this);
 		Iterator<String> it = keys.iterator();
 		while(it.hasNext()){
 			String next = it.next();
@@ -850,6 +850,12 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     			n.setProperty("user","unknown");    			
     		}
     		ApplicationManager.log(this, n);
+    }
+    
+    public Boolean externalGainEvent(HttpServletRequest request,String data) {
+    	System.out.println("Error: Incoming gain event on : "+id+" not handled by app");
+    	System.out.println("DATA="+data);
+    	return false;
     }
 
 }

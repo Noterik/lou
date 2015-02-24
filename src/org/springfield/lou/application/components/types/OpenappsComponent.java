@@ -193,7 +193,6 @@ public class OpenappsComponent extends BasicComponent {
 	
 	public void logChange(FSList log) {
 		loglist = log;
-		System.out.println("LOG="+log.size());
 		StringBuffer body = new StringBuffer();
 		body.append("<div id=\"debugscrollarea\" style=\"overflow:scroll; height:100%;\">");
 		body.append("<table width=\"100%\"><tr>");

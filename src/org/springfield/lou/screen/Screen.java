@@ -178,6 +178,17 @@ public class Screen {
 		}
 	}
 	
+	public void setDiv(String t,String p) {
+		if (data==null) {
+			data = "sdiv("+t+")="+p;
+		} else {
+			data += "($end$)sdiv("+t+")="+p;
+		}
+		synchronized (this) {
+		    this.notify();
+		}
+	}
+	
 	/**
 	 * Sets data to be sent to the screen
 	 * @param data the data to be sent

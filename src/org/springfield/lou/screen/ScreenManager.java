@@ -54,7 +54,7 @@ public class ScreenManager {
     }
     
     public void remove(String id){
-    	System.out.println("REMOVE SCREEN="+id+" on "+this+" screens left="+openscreens.size());
+    	//System.out.println("REMOVE SCREEN="+id+" on "+this+" screens left="+openscreens.size());
     	this.openscreens.remove(id);
     }
     
