@@ -242,8 +242,6 @@ public class LouServlet extends HttpServlet {
 			body+="<script type=\"text/javascript\">if (!window.console) window.console = {};if (!window.console.log) window.console.log = function () { };</script>";
 			body+="<script language=\"javascript\" type=\"text/javascript\">var LouSettings = {\"lou_ip\": \"" + LazyHomer.getExternalIpNumber() + "\", \"lou_port\": \"" + LazyHomer.getBartPort() + "\", \"user\": \"" + user + "\", \"app\": \"" + nameapp + "\", \"fullapp\": \"" + fullappname + "\", \"appparams\": \"" + params + "\"}</script>\n";
 			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery-1.8.0.js\"></script>\n";
-			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"http://code.jquery.com/ui/1.11.2/jquery-ui.js\"></script>\n";
-			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery.ui.touch-punch.min.js\"></script>\n";
 			
 			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery.xdomainrequest.min.js\"></script>\n";
 			String libs = getLibPaths(nameapp);
@@ -253,6 +251,10 @@ public class LouServlet extends HttpServlet {
 					body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/apps/"+l[i]+"\"></script>\n";
 				}
 			}
+			
+			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery-ui.js\"></script>\n";
+			body+="<script language=\"javascript\" type=\"text/javascript\" src=\"/eddie/js/jquery.ui.touch-punch.min.js\"></script>\n";
+
 			// check if the domain has a special eddie script (for devel use)
 			String domain = fullappname.substring(8);
 			domain = domain.substring(0,domain.indexOf("/"));

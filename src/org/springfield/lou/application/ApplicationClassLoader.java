@@ -95,6 +95,7 @@ public class ApplicationClassLoader extends SecureClassLoader {
         } catch (Exception e) { }  
       
         try {  
+        	System.out.println("JAR FILE: " + jarFile);
         	JarFile jar = new JarFile(jarFile);  
             // System.out.println("JARFILE="+jar+" "+jarFile);
             String filename = className.replace('.','/');
