@@ -18,3 +18,11 @@ dist/lou.war
 *.class
 
 *.class
+
+*.jar
+
+*.war
+
+*.class
+
+dist/lou.war

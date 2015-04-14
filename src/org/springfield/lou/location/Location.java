@@ -45,7 +45,6 @@ public class Location {
 	}
 	
 	public void setId(String i) {
-		System.out.println("SET LOC ID="+i);
 		id = i;
 	}
 }

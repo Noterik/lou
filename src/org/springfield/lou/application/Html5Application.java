@@ -22,6 +22,7 @@
 package org.springfield.lou.application;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -222,14 +223,52 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	}
 	
 	public void executeActionlist(String name) {
-		actionlistmanager.executeList(null, name);
+		if (actionlistmanager.executeList(null, name)) {
+			
+		} else {
+			// call class directly, to simulate a callServer
+		}
 	}
 	
 	public void executeActionlist(Screen s,String name) {
 		//System.out.println("executeActionlist()");
 		//System.out.println(s);
 		//System.out.println(name);
-		actionlistmanager.executeList(s, name);
+		if (actionlistmanager.executeList(s, name)) {
+			// so we did call a list !
+		} else {
+			try {
+				// call class directly, to simulate a callServer
+				int pos = name.indexOf("(");
+				if (pos!=-1) {
+					String content = name.substring(pos+1,name.length()-1);
+					name = name.substring(0,pos);
+					//System.out.println("NAME="+name);
+					String methodname=dirToName(name);
+					//System.out.println("MNAME="+methodname);
+					Method method = this.getClass().getMethod(methodname,Screen.class,String.class);
+					if (method!=null) {
+						//System.out.println("DIRECT METHOD FOUND="+method);
+						method.invoke(this,s,content);
+					} else {
+						System.out.println("MISSING METHOD IN APP ="+method);
+					}
+				} else {
+					//System.out.println("NAME="+name);
+					String methodname=dirToName(name);
+					//System.out.println("MNAME="+methodname);
+					Method method = this.getClass().getMethod(methodname,Screen.class,String.class);
+					if (method!=null) {
+						//System.out.println("DIRECT METHOD FOUND="+method);
+						method.invoke(this,s);
+					} else {
+						System.out.println("MISSING METHOD IN APP ="+method);
+					}
+				}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+		}
 	}
 	
 	public UserManager getUserManager(){
@@ -850,6 +889,18 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     			n.setProperty("user","unknown");    			
     		}
     		ApplicationManager.log(this, n);
+    }
+    
+    private String dirToName(String dir) {
+    	// converts things like divione/mouseup to 'actionDivoneMouseup'
+    	String name = "action";
+    	String[] parts = dir.split("/");
+    	for (int i=0;i<parts.length;i++) {
+    		String tmp = parts[i].substring(0,1);
+    		String tmp2 = parts[i].substring(1);
+    		name += tmp.toUpperCase()+tmp2.toLowerCase();
+    	}
+    	return name;
     }
     
     public Boolean externalGainEvent(HttpServletRequest request,String data) {

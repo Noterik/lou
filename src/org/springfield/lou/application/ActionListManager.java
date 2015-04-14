@@ -21,10 +21,10 @@ public class ActionListManager {
 		readActionLists();
 	}
 	
-	public void executeList(Screen s,String name) {
+	public boolean executeList(Screen s,String name) {
 		System.out.println("EXECUTE LIST="+s+" name");
 		if (name.indexOf("log(")!=-1 || name.equals("log")) { // some actionlists are ignored
-			return;
+			return true;
 		}
 		int pos = name.indexOf("(");
         if (pos!=-1) {
@@ -34,16 +34,19 @@ public class ActionListManager {
     			if (maf!=null) {
     				maf.execute(s,content);
     			} else {
-    				System.out.println("can't find trigggered action list "+name);
+    				//System.out.println("can't find trigggered action list "+name);
+    				return false;
     			}
         } else {
         		ActionList maf = actionlists.get(name);
         		if (maf!=null) {
         			maf.execute(s);
     			} else {
-    				System.out.println("can't find trigggered action list "+name);
+    				//System.out.println("can't find trigggered action list "+name);
+    				return false;
         		}
         }
+        return true;
 	}
 	
 	private void readActionLists() {
