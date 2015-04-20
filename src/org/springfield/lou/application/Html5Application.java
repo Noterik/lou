@@ -24,6 +24,7 @@ package org.springfield.lou.application;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -76,6 +77,8 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     protected int externalInterfaceId;
     protected String remoteReciever = "video";
     protected boolean paired = false;
+    protected boolean sessionrecovery = false;
+	protected ArrayList<String> recoverylist  = new ArrayList<String>();
     protected boolean running = true;
     protected int fakeconnectionlost = 0;
     protected int fakeconnectionlostcount = 5;
@@ -117,6 +120,22 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
         
         // load action lists and call the init !
         
+    }
+    
+    public void addToRecoveryList(String name) {
+    	recoverylist.add(name);
+    }
+    
+    public ArrayList<String> getRecoveryList() {
+    	return recoverylist;
+    }
+    
+    public void setSessionRecovery(boolean s) {
+    	sessionrecovery = s;
+    }
+    
+    public boolean getSessionRecovery() {
+    	return sessionrecovery;
     }
     
 	public Html5Application(String id) {
@@ -174,7 +193,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		Long newid = new Date().getTime();
 		screencounter++;
 		Screen screen = new Screen(this,caps,id+"/1/screen/"+newid);
-		System.out.println("NEW SCREEN="+this+" "+this.getAppname()+" "+this.getId()+" "+screencounter);
+	//	System.out.println("NEW SCREEN="+this+" "+this.getAppname()+" "+this.getId()+" "+screencounter);
 
 		screen.setParameters(p); // this can also be used to set location ?
 	//	System.out.println("CAP IP="+caps.getCapability("ipnumber"));

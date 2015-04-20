@@ -21,6 +21,7 @@
 
 package org.springfield.lou.application;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,4 +87,8 @@ public interface Html5ApplicationInterface {
 	public String getFavicon();
 	public String getMetaHeaders(HttpServletRequest request);
 	public Boolean externalGainEvent(HttpServletRequest request,String data);
+	public void setSessionRecovery(boolean s);
+	public boolean getSessionRecovery();
+	public ArrayList<String> getRecoveryList(); 
+	public void addToRecoveryList(String name);
 }

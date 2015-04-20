@@ -111,7 +111,7 @@ public class LouServlet extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type,Range,If-None-Match,Accept-Ranges");
 		response.addHeader("Access-Control-Expose-Headers", "Content-Range");
-		System.out.println("METHOD="+request.getMethod()+" "+request.getRequestURI());
+		//System.out.println("METHOD="+request.getMethod()+" "+request.getRequestURI());
 		String mt = request.getContentType();
 		if (mt!=null && mt.indexOf("text/put")!=-1) { // need to check who made this and why (daniel)
 			doPut(request,response);

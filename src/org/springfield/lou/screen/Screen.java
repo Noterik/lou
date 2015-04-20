@@ -28,6 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+import org.dom4j.Node;
 import org.springfield.fs.Fs;
 import org.springfield.fs.FsNode;
 import org.springfield.lou.application.*;
@@ -53,6 +54,7 @@ public class Screen {
 	
 	private String id;
 	private String shortid;
+	private String recoveryid;
 	private String role = "unknown";
 	private Capabilities capabilities;
 	private Html5ApplicationInterface app;
@@ -75,10 +77,44 @@ public class Screen {
 		int pos = id.indexOf("/screen/")+8;
 		this.shortid=id.substring(pos);
 		this.app = a;
-		this.cm = new ComponentManager();
 		this.properties = new HashMap<String, Object>();
-		//this.capabilities = caps;
-		//this.content = "";
+		
+		// so some session recovery, only allow sessions per user !!!
+		//System.out.println("RECOVERY="+a.getSessionRecovery());
+		
+		if (a.getSessionRecovery()) {
+			//System.out.println("SESSIONID3="+caps.getCapability("smt_sessionid"));
+			String sid = caps.getCapability("smt_sessionid");
+			String appuser = a.getFullId();
+			pos = appuser.indexOf("/user/");
+			if (pos!=-1) {
+				appuser = appuser.substring(pos+6);
+				appuser = appuser.substring(0, appuser.indexOf("/"));
+				FsNode n = Fs.getNode("/domain/"+a.getDomain()+"/session/"+appuser);
+				if (n==null) {
+						FsNode sessionnode = new FsNode("session",appuser);
+						Fs.insertNode(sessionnode,"/domain/"+a.getDomain());
+				}
+				recoveryid = "/domain/"+a.getDomain()+"/session/"+appuser+"/"+a.getAppname()+"/"+sid;
+				FsNode n2 = Fs.getNode(recoveryid);
+				if (n2==null) {
+					n2 = new FsNode(a.getAppname(),sid);
+					Fs.insertNode(n2, "/domain/"+a.getDomain()+"/session/"+appuser);
+				}
+				// ok lets look at the recovery list and see what to load back into the screen
+				ArrayList<String> list = app.getRecoveryList();
+				for(Iterator<String> iter = list.iterator(); iter.hasNext(); ) {
+					String name =  iter.next();
+					String value = n2.getProperty(name);
+					if (value!=null) {
+						setProperty(name, value); // put it back for now just String work !
+					}
+				}
+			}
+		}
+		
+		
+		this.cm = new ComponentManager();
 		setSeen();
 	}
 	
@@ -105,6 +141,12 @@ public class Screen {
 	
 	public void setProperty(String key, Object value){
 		properties.put(key, value);
+		// ok lets check if we also need to store it in the session object in smithers
+		ArrayList<String> list = app.getRecoveryList();
+		if (list.contains(key)) {
+			// ok we need to store this for now just works for Strings
+			Fs.setProperty(recoveryid, key, value.toString());
+		}
 	}
 	
 	public Object getProperty(String key){
@@ -310,7 +352,7 @@ public class Screen {
 			br.close();
 		} catch (FileNotFoundException e) {
 			failed=true;
-			System.out.println("COULD NOT FIND : "+stylepath);
+			//System.out.println("COULD NOT FIND : "+stylepath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
