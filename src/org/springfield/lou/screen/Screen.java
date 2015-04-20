@@ -80,8 +80,6 @@ public class Screen {
 		this.properties = new HashMap<String, Object>();
 		
 		// so some session recovery, only allow sessions per user !!!
-		//System.out.println("RECOVERY="+a.getSessionRecovery());
-		
 		if (a.getSessionRecovery()) {
 			//System.out.println("SESSIONID3="+caps.getCapability("smt_sessionid"));
 			String sid = caps.getCapability("smt_sessionid");
@@ -111,9 +109,9 @@ public class Screen {
 					}
 				}
 			}
+		} else {
+			System.out.println("APP STARTED IN ROOT NOT AS A USER needs to be in /user/[name]/ "+a.getFullId());
 		}
-		
-		
 		this.cm = new ComponentManager();
 		setSeen();
 	}
