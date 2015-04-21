@@ -91,4 +91,5 @@ public interface Html5ApplicationInterface {
 	public boolean getSessionRecovery();
 	public ArrayList<String> getRecoveryList(); 
 	public void addToRecoveryList(String name);
+	public void setCallback(String name,String k,Object o);
 }

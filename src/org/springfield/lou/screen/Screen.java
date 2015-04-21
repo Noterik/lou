@@ -229,6 +229,19 @@ public class Screen {
 		}
 	}
 	
+	public void setDiv(String t,String p,String m) {
+		setDiv(t,p,m,app.getClass());
+	}
+	
+	public void setDiv(String t,String p,String m,Object o) {
+		int pos = p.indexOf("bind:");
+		if (pos!=-1) {
+			String  name = t+"/"+p.substring(pos+5);
+			app.setCallback(name,m,o);
+			setDiv(t,p);
+		}
+	}
+	
 	/**
 	 * Sets data to be sent to the screen
 	 * @param data the data to be sent
@@ -671,6 +684,15 @@ public class Screen {
 	public void log(String msg,int level) {
 		app.log(this,msg,level);
 	}
+	
+	public void setProperties(String content) {
+		String[] cmd=content.split(",");
+		for (int i=0;i<cmd.length;i++) {
+			String[] param = cmd[i].split("=");
+			setProperty(param[0],param[1]);
+		}
+	}
+	
 	
 	public void loadContent(String target,String ctype,Boolean overload, Html5ApplicationInterface app) {
 		// lets find out what is the active version for this app

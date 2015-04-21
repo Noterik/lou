@@ -87,6 +87,8 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 	protected Map<String, String> referids = new HashMap<String, String>();
 	protected Map<String, String> referidscss = new HashMap<String, String>();
 	protected Map<String, String> actionlists = new HashMap<String, String>();
+    protected Map<String, String> callbackmethods = new HashMap<String, String>();
+    protected Map<String, Object> callbackobjects = new HashMap<String, Object>();
     
     public Html5Application(String id, String remoteReciever) {
     	this.timeoutcheck = false;
@@ -189,6 +191,10 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 		this.actionlistmanager = new ActionListManager(this);
 	}
 	
+	public void setCallback(String name,String m,Class c) {
+		
+	}
+	
 	public synchronized Screen getNewScreen(Capabilities caps,Map<String,String[]> p) {
 		Long newid = new Date().getTime();
 		screencounter++;
@@ -264,22 +270,42 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 					name = name.substring(0,pos);
 					//System.out.println("NAME="+name);
 					String methodname=dirToName(name);
+					Object caller = this;
+					
+					// are these 2 overridden ?
+					String overridemethodname = callbackmethods.get(name);
+					if (overridemethodname!=null) {
+						methodname = overridemethodname;
+						caller = callbackobjects.get(name);
+						//System.out.println("OVERRIDE2 ON="+name+" methodname="+methodname+" object="+caller);
+					}
+					
 					//System.out.println("MNAME="+methodname);
-					Method method = this.getClass().getMethod(methodname,Screen.class,String.class);
+					Method method = caller.getClass().getMethod(methodname,Screen.class,String.class);
 					if (method!=null) {
 						//System.out.println("DIRECT METHOD FOUND="+method);
-						method.invoke(this,s,content);
+						method.invoke(caller,s,content);
 					} else {
 						System.out.println("MISSING METHOD IN APP ="+method);
 					}
 				} else {
-					//System.out.println("NAME="+name);
+					//System.out.println("NAME2="+name);
 					String methodname=dirToName(name);
+					Object caller = this;
+					
+					// are these 2 overridden ?
+					String overridemethodname = callbackmethods.get(name);
+					if (overridemethodname!=null) {
+						methodname = overridemethodname;
+						caller = callbackobjects.get(name);
+						//System.out.println("OVERRIDE ON="+name+" methodname="+methodname+" object="+caller);
+					}
+					
 					//System.out.println("MNAME="+methodname);
-					Method method = this.getClass().getMethod(methodname,Screen.class,String.class);
+					Method method = caller.getClass().getMethod(methodname,Screen.class,String.class);
 					if (method!=null) {
 						//System.out.println("DIRECT METHOD FOUND="+method);
-						method.invoke(this,s);
+						method.invoke(caller,s);
 					} else {
 						System.out.println("MISSING METHOD IN APP ="+method);
 					}
@@ -908,6 +934,12 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
     			n.setProperty("user","unknown");    			
     		}
     		ApplicationManager.log(this, n);
+    }
+    
+    public void setCallback(String name,String m,Object o) {
+    	System.out.println("SET CALLBACK "+name+" to "+m+" o="+o);
+    	callbackmethods.put(name, m); 
+    	callbackobjects.put(name, o); 
     }
     
     private String dirToName(String dir) {
