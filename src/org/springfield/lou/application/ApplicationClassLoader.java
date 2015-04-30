@@ -55,7 +55,7 @@ public class ApplicationClassLoader extends SecureClassLoader {
 	public Class<?> findClass(String className) {
 		
 		PermissionCollection perm = this.getPermissions(null);
-		System.out.println("PERM="+perm);
+		//System.out.println("PERM="+perm);
 		
 		Enumeration<Permission> pi = perm.elements();
 
@@ -95,7 +95,7 @@ public class ApplicationClassLoader extends SecureClassLoader {
         } catch (Exception e) { }  
       
         try {  
-        	System.out.println("JAR FILE: " + jarFile);
+        	//System.out.println("JAR FILE: " + jarFile);
         	JarFile jar = new JarFile(jarFile);  
             // System.out.println("JARFILE="+jar+" "+jarFile);
             String filename = className.replace('.','/');
