@@ -99,6 +99,7 @@ public class ApplicationClassLoader extends SecureClassLoader {
         	JarFile jar = new JarFile(jarFile);  
             // System.out.println("JARFILE="+jar+" "+jarFile);
             String filename = className.replace('.','/');
+            System.out.println("CLASSLOADED WANTS TO LOAD "+filename + ".class");
             JarEntry entry = jar.getJarEntry(filename + ".class");  
             // System.out.println("JARENTRY="+entry);
             InputStream is = jar.getInputStream(entry);  

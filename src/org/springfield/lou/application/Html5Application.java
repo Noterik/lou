@@ -302,7 +302,7 @@ public class Html5Application implements Html5ApplicationInterface,Runnable {
 					}
 					
 					//System.out.println("MNAME="+methodname);
-					Method method = caller.getClass().getMethod(methodname,Screen.class,f);
+					Method method = caller.getClass().getMethod(methodname,Screen.class,String.class);
 					if (method!=null) {
 						//System.out.println("DIRECT METHOD FOUND="+method);
 						method.invoke(caller,s);
