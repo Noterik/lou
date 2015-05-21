@@ -233,6 +233,7 @@ public class LouServlet extends HttpServlet {
 			if (favicon!=null) {
 				body+="<link rel=\"icon\" type=\"image/png\" href=\""+favicon+"\"/>";
 			}
+			body+="<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" >";
 			body+="<meta http-equiv=\"Content-Type\" content=\"application/vnd.hbbtv.xml+xhtml; utf-8\" />";
 			body+="<meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />";
 			body+="<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\" />";
