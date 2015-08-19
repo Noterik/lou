@@ -21,19 +21,13 @@
 
 package org.springfield.lou.servlet;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -46,11 +40,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
-import org.springfield.lou.ServiceHandler;
-import org.springfield.lou.application.ActionList;
 import org.springfield.lou.application.ApplicationManager;
 import org.springfield.lou.application.Html5ApplicationInterface;
-import org.springfield.lou.application.components.types.proxy.ProxyComponent;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.screen.Capabilities;
 import org.springfield.lou.screen.Screen;
@@ -61,7 +52,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 
 /**
  * Servlet implementation class ServletResource

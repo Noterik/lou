@@ -21,15 +21,8 @@
 
 package org.springfield.lou.restlet;
 
-import javax.servlet.ServletContext;
-
 import org.restlet.Application;
-import org.restlet.Component;
-import org.restlet.Context;
 import org.restlet.Restlet;
-import org.springfield.lou.homer.LazyHomer;
-
-import com.noelios.restlet.ext.servlet.ServletContextAdapter;
 
 /**
  * LouApplication
@@ -40,54 +33,13 @@ import com.noelios.restlet.ext.servlet.ServletContextAdapter;
  *
  */
 public class LouApplication extends Application {	
-	private static LazyHomer lh = null; 
-	
     public LouApplication() {
     	super();
     	System.out.println("Lou starts");
     }
-    
-    public LouApplication(Context parentContext) {
-    	super(parentContext);
-    }
-    
-    public void start(){
-		try{
-			super.start();
-		}catch(Exception e){
-			System.out.println("Error starting application");
-			e.printStackTrace();
-		}
-	} 
-    
-    /**
-	 * Called on shutdown
-	 */
-	public void stop() throws Exception {
-		try {
-			super.stop();
-		} catch (Exception e) {
-			System.out.println("lou: error stopping application");
-			e.printStackTrace();
-		}		
-		// destroy global config
-		//LouServer.instance().destroy();
-		lh.destroy();
-	}
 
     @Override
-    public Restlet createRoot() {
-    	// set rootpath and return restlet
-    	ServletContextAdapter adapter = (ServletContextAdapter) getContext();
-		ServletContext servletContext = adapter.getServletContext();
-		
-		LazyHomer lh = new LazyHomer();
-		lh.init(servletContext.getRealPath("/"));		
-		
-		// disable logging
-		Component component = (Component)servletContext.getAttribute("com.noelios.restlet.ext.servlet.ServerServlet.component");
-		component.getLogService().setEnabled(false);
-		
+    public Restlet createInboundRoot() {	
 		return new LouRestlet(super.getContext());
     }
 }

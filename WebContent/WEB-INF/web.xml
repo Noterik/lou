@@ -10,7 +10,7 @@
 			Default Restlet
 		</display-name>
 		<servlet-name>ServerServlet</servlet-name>
-		<servlet-class>com.noelios.restlet.ext.servlet.ServerServlet</servlet-class>
+		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
@@ -24,12 +24,16 @@
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
 	
-	
 	<servlet>
 	    <servlet-name>LouServlet</servlet-name>
 	    <servlet-class>org.springfield.lou.servlet.LouServlet</servlet-class>
 	    <load-on-startup>1</load-on-startup>
 	</servlet>   
+	
+	 <listener>
+    	<listener-class>org.springfield.lou.servlet.LouInitialListener</listener-class>
+  	</listener>
+	
 	<servlet-mapping>
 	    <servlet-name>LouServlet</servlet-name>
 	    <url-pattern>/*</url-pattern>

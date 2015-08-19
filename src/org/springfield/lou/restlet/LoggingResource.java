@@ -26,12 +26,13 @@ import org.apache.log4j.Logger;
 import org.restlet.Context;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
-import org.restlet.resource.StringRepresentation;
-import org.restlet.resource.Variant;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.representation.Representation;
+import org.restlet.resource.Get;
+import org.restlet.resource.ServerResource;
+import org.restlet.representation.StringRepresentation;
+import org.restlet.representation.Variant;
 import org.springfield.lou.homer.LazyHomer;
 
 /**
@@ -54,17 +55,22 @@ import org.springfield.lou.homer.LazyHomer;
  * @package org.springfield.lou.restlet
  *
  */
-public class LoggingResource extends Resource {
+public class LoggingResource extends ServerResource {
+
+	
+	public LoggingResource() {
+		//constructor
+	}
 
 	/**
-	 * Default constructor
+	 * DoInit
 	 * 
 	 * @param context
 	 * @param request
 	 * @param response
 	 */
-	public LoggingResource(Context context, Request request, Response response) {
-		super(context, request, response);
+	public void doInit(Context context, Request request, Response response) {
+		super.init(context, request, response);
 		
 		// add representational variants allowed
         getVariants().add(new Variant(MediaType.TEXT_XML));
@@ -79,8 +85,8 @@ public class LoggingResource extends Resource {
 	/**
 	 * GET
 	 */
-	@Override
-    public Representation getRepresentation(Variant variant) {
+	@Get
+	public void handleGet() {
 		String responseBody = "";
 		
 		// get parameters
@@ -126,6 +132,6 @@ public class LoggingResource extends Resource {
 		
 		// return
 		Representation entity = new StringRepresentation(responseBody);
-        return entity;
+		getResponse().setEntity(entity);
 	}
 }

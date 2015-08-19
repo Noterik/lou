@@ -22,7 +22,7 @@
 package org.springfield.lou.restlet;
 
 import org.restlet.Context;
-import org.restlet.Router;
+import org.restlet.routing.Router;
 
 /**
  * LouRestlet
@@ -35,6 +35,8 @@ import org.restlet.Router;
 public class LouRestlet extends Router {	
 	public LouRestlet(Context cx) {
 		super(cx);
+		
+		this.setRoutingMode(Router.MODE_BEST_MATCH);
 		
 		// logging resource
 		this.attach("/logging",LoggingResource.class);

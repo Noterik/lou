@@ -23,12 +23,16 @@ package org.springfield.lou.restlet;
 
 import org.restlet.Context;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
-import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
-import org.restlet.resource.StringRepresentation;
-import org.restlet.resource.Variant;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.resource.Delete;
+import org.restlet.resource.Get;
+import org.restlet.resource.Post;
+import org.restlet.resource.Put;
+import org.restlet.representation.Representation;
+import org.restlet.resource.ServerResource;
+import org.restlet.representation.StringRepresentation;
+import org.restlet.representation.Variant;
 
 /**
  * LouResource
@@ -38,21 +42,18 @@ import org.restlet.resource.Variant;
  * @package org.springfield.lou.restlet
  *
  */
-public class LouResource extends Resource {
+public class LouResource extends ServerResource {
 	/**
 	 * Request uri
 	 */
 	protected String uri; 
 	
-	/**
-	 * Sole constructor
-	 * 
-	 * @param context
-	 * @param request
-	 * @param response
-	 */
-	public LouResource(Context context, Request request, Response response) {
-        super(context, request, response);
+	public LouResource() {
+		//constructor
+	}	
+	
+	public void doInit(Context context, Request request, Response response) {
+        super.init(context, request, response);
         
         // add representational variants allowed
         getVariants().add(new Variant(MediaType.TEXT_XML));
@@ -70,17 +71,18 @@ public class LouResource extends Resource {
 	/**
 	 * GET
 	 */
-	@Override
-    public Representation getRepresentation(Variant variant) {
+	@Get
+	public void handleGet() {
 		String responseBody = "GET: " + uri;
 		Representation entity = new StringRepresentation(responseBody);
-        return entity;
+		getResponse().setEntity(entity);
 	}
 	
 	/**
 	 * PUT
 	 */
-	public void put(Representation representation) {
+	@Put
+	public void handlePut() {
 		String responseBody = "PUT: " + uri;
 		Representation entity = new StringRepresentation(responseBody);
 		getResponse().setEntity(entity);
@@ -89,7 +91,8 @@ public class LouResource extends Resource {
 	/**
 	 * POST
 	 */
-	public void post(Representation representation) {
+	@Post
+	public void handlePost() {
 		String responseBody = "POST: " + uri;
 		Representation entity = new StringRepresentation(responseBody);
 		getResponse().setEntity(entity);
@@ -98,7 +101,8 @@ public class LouResource extends Resource {
 	/**
 	 * DELETE
 	 */
-	public void delete() {
+	@Delete
+	public void handleDelete() {
 		String responseBody = "DELETE: " + uri;
 		Representation entity = new StringRepresentation(responseBody);
 		getResponse().setEntity(entity);
