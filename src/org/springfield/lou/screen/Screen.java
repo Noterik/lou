@@ -81,7 +81,7 @@ public class Screen {
 		
 		// so some session recovery, only allow sessions per user !!!
 		if (a.getSessionRecovery()) {
-			//System.out.println("SESSIONID3="+caps.getCapability("smt_sessionid"));
+			System.out.println("SESSIONID3="+caps.getCapability("smt_sessionid"));
 			String sid = caps.getCapability("smt_sessionid");
 			String appuser = a.getFullId();
 			pos = appuser.indexOf("/user/");
@@ -143,6 +143,7 @@ public class Screen {
 		ArrayList<String> list = app.getRecoveryList();
 		if (list.contains(key)) {
 			// ok we need to store this for now just works for Strings
+			System.out.println("SET RECOVERY="+key+"="+value+" REC="+recoveryid);
 			Fs.setProperty(recoveryid, key, value.toString());
 		}
 	}
