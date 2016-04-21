@@ -158,7 +158,7 @@ public class LouServlet extends HttpServlet {
 		int pos = body.indexOf("/html5application/");
 		if (pos!=-1) {
 			pos = body.indexOf("/lou/domain/");
-			if (pos!=0) {
+			if (pos > 0) {
 				System.out.println("Fixedget="+body);
 				body = body.substring(pos);
 				System.out.println("Fixedout="+body);

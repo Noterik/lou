@@ -57,7 +57,6 @@ import org.springfield.lou.homer.LazyHomer;
  */
 public class LoggingResource extends ServerResource {
 
-	
 	public LoggingResource() {
 		//constructor
 	}

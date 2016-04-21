@@ -22,7 +22,7 @@
 	<servlet-mapping>
 		<servlet-name>ServerServlet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>	
 	
 	<servlet>
 	    <servlet-name>LouServlet</servlet-name>
