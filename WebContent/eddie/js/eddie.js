@@ -1,7 +1,7 @@
 var Eddie = function(options){
-	
+
 	var self = {};
-	
+
 	var settings = {
 		lou_ip: "",
 		lou_port: "",
@@ -15,8 +15,8 @@ var Eddie = function(options){
 		worker: null
 	}
 	$.extend(settings, options);
-	
-	settings.lou_port = (window.location.port == "") ? '80' : window.location.port;	
+
+	settings.lou_port = (window.location.port == "") ? '80' : window.location.port;
 
 	self.init = function(){
 		if(typeof(Worker) != "undefined"){
@@ -24,13 +24,13 @@ var Eddie = function(options){
   		}else{
   			console.log("Worker not supported");
   		}
-		
+
 		$(self).on('register-success', self.listen);
 		register();
 		addGestureEvents();
-		
+
 	}
-	
+
 	self.destroy = function() {
 		$.each(components, function(key, comp){
 			if(typeof comp.destroy == "function"){
@@ -38,10 +38,10 @@ var Eddie = function(options){
 			}
 		});
 		var splits = settings.screenId.split('/');
-		
+
 		self.putLou('notification','show(user ' + splits[splits.length - 1] + ' left session!)');
 		var postData = "stop(" + settings.screenId + ")";
-		var args = 
+		var args =
 		self.doRequest({
 			'type': 'POST',
 			'url': "http://" + settings.lou_ip + ":" + settings.lou_port + "/lou/LouServlet" + settings.fullapp,
@@ -50,15 +50,15 @@ var Eddie = function(options){
 			'async': false
 		});
 	}
-	
+
 	self.doRequest = function(args){
-		$.ajax(args);	
+		$.ajax(args);
 	}
-	
+
 	self.getComponent = function(comp){
 		return components[comp];
 	}
-	
+
 	self.listen = function(){
 		if(!settings.worker){
 			$(self).on('request-success', function(event, response){
@@ -86,7 +86,7 @@ var Eddie = function(options){
 			}
 		}
 	}
-	
+
 	self.getScreenId = function(){
 		return settings.screenId;
 	}
@@ -100,7 +100,7 @@ var Eddie = function(options){
                 self.putLou("","log("+msg+","+level+")");
                 return false;
         }
-	
+
 	self.putLou = function(targetid, content, sync) {
 		var postData = "put(" + settings.screenId + "," + targetid + ")=" + content;
 		self.doRequest({
@@ -111,10 +111,10 @@ var Eddie = function(options){
 			'dataType': 'text',
 			'async': !sync
 		});
-		
+
 		return false;
 	}
-	
+
 	var register = function(){
 		var parseRegisterResponse = function(response){
 			settings.screenId = $(response).find('screenid').first().text();
@@ -127,7 +127,7 @@ var Eddie = function(options){
 			'success': parseRegisterResponse
 		})
 	}
-	
+
 	var request = function(){
 		var putData = "<fsxml><screen><properties><screenId>" + settings.screenId + "</screenId></properties></screen></fsxml>";
 		var appId = settings.screenId.substring(0, settings.screenId.indexOf("/1/screen"));
@@ -143,7 +143,7 @@ var Eddie = function(options){
 			}
 		});
 	}
-	
+
 	var parseResponse = function(response){
 		var result = response;
 		if (result.indexOf("<screenid>appreset</screenid>")!=-1) {
@@ -154,28 +154,28 @@ var Eddie = function(options){
 			var command = result.substring(0,pos);
 			result = result.substring(pos+1);
 			pos = result.indexOf(")");
-			
+
             var targetid = result.substring(0,pos);
 
             switch(command){
             	case "set":
             		var content = result.substring(pos+2);
             		pos = content.indexOf("($end$)");
-            		if(pos!=-1) 
+            		if(pos!=-1)
             			content = content.substring(0,pos);
             			setDiv(targetid,content);
             		break;
              	case "add":
             		var content = result.substring(pos+2);
             		pos = content.indexOf("($end$)");
-            		if(pos!=-1) 
+            		if(pos!=-1)
             			content = content.substring(0,pos);
             			addToDiv(targetid,content);
             		break;
             	case "put":
             		var content = result.substring(pos+2);
             		pos = content.indexOf("($end$)");
-            		if(pos!=-1) 
+            		if(pos!=-1)
             			content = content.substring(0,pos);
 						putMsg(targetid,content);
 					break;
@@ -198,7 +198,7 @@ var Eddie = function(options){
             	case "setscript":
             		var content = result.substring(pos+2);
 					pos = content.indexOf("($end$)");
-					if (pos!=-1) 
+					if (pos!=-1)
 						content = content.substring(0,pos);
                 	setScript(targetid,content);
                 	break;
@@ -207,7 +207,7 @@ var Eddie = function(options){
 					removeStyle(content);
                 	break;
             }
-            
+
             // lets check if there are move messages
 			pos = result.indexOf("($end$)");
 			if (pos!=-1) {
@@ -218,44 +218,44 @@ var Eddie = function(options){
 			}
 		}
 	}
-	
+
 	function remove(args){
 		var splits = args.split(",");
 		var targetid = splits[0];
 		var leaveDiv = splits[1];
-		
+
 		if(leaveDiv == "false"){
 			removeDiv(targetid);
 		}else{
 			emptyDiv(targetid);
 		}
-			
+
 		removeScript(targetid);
 		removeInstance(targetid);
 	}
-	
+
 	function removeDiv(targetid) {
 		var div = document.getElementById(targetid);
 		if (div!=null) {
 			div.parentNode.removeChild(div);
 		}
 	};
-	
+
 	function emptyDiv(targetid){
 		var div = document.getElementById(targetid);
 		if(div!=null){
 			div.innerHTML = "";
 		}
 	}
-	
+
 	function removeScript(targetid){
 		$('#script_' + targetid).remove();
 	}
-	
+
 	function removeInstance(targetid){
 		delete components[targetid];
 	}
-	
+
 	function putMsg(targetid,content) {
 		var new_content = content;
 		try{
@@ -273,7 +273,7 @@ var Eddie = function(options){
 				};
 			}
 		}catch(e){ console.log("escaped: " + content);}
-		
+
 		content = new_content;
 		var div = document.getElementById(targetid);
 		if(components[targetid]){
@@ -282,7 +282,7 @@ var Eddie = function(options){
 			window[targetid+"_putMsg"](content);
 		}
 	};
-	
+
 	function setCSS(filename) {
 	  var fileref=document.createElement("link");
 	  fileref.setAttribute("rel", "stylesheet");
@@ -325,7 +325,7 @@ var Eddie = function(options){
 	function removeStyle(style){
 		$('style#'+style).remove();
 	}
-	
+
 	function setScript(targetid, scriptbody) {
 		var script   = document.createElement("script");
 		script.type  = "text/javascript";
@@ -333,7 +333,7 @@ var Eddie = function(options){
 		script.id = 'script_' + targetid;
 		document.body.appendChild(script);
 	}
-	
+
 	function setDiv(targetid,content) {
 		// console.log("setting target: "+targetid);
 		var div = document.getElementById(targetid);
@@ -347,11 +347,11 @@ var Eddie = function(options){
 		}
 
 	};
-	
+
 	function addToDiv(targetid,content) {
 		var div = document.getElementById(targetid);
 		if (div!=null) {
-	       	    
+
 	       	    ne = document.createElement('div');
 	            ne.innerHTML = content;
 	            div.appendChild(ne);
@@ -369,7 +369,7 @@ var Eddie = function(options){
 		body +="<screenwidth>"+window.innerWidth+"</screenwidth>";
 		body +="<screenheight>"+window.innerHeight+"</screenheight>";
 		body +="<orientation>"+window.orientation+"</orientation>";
-		
+
 		var browserid = readCookie("smt_browserid");
 		if (browserid==null) {
 			var date = new Date();
@@ -377,9 +377,23 @@ var Eddie = function(options){
 		}
 		browserid = readCookie("smt_browserid");
 		body +="<smt_browserid>"+browserid+"</smt_browserid>";
+
+		var s = document.URL;
+		s = s.substring(s.indexOf("/domain/")+8);
+		s = s.substring(0,s.indexOf("?"));
+		s = s.replace(/\//g,"_");
+		s = ""; // ignore sessions per app for now
+		var sessionid = readCookie("smt_"+s+"_sessionid");
+		if (sessionid===null) {
+			date = ""+new Date().getTime();
+			createCookie("smt_"+s+"_sessionid",date,365);
+		}
+		sessionid = readCookie("smt_"+s+"_sessionid");
+		body +="<smt_sessionid>"+sessionid+"</smt_sessionid>";
+
 		return body;
 	}
-	
+
 	function createCookie(name, value, days) {
     	var expires;
     	if (days) {
@@ -411,6 +425,6 @@ function eraseCookie(name) {
   			self.putLou('','orientationchange('+window.orientation+')');
 		}, false);
 	}
-	
+
 	return self;
 }

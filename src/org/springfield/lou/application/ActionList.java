@@ -42,14 +42,17 @@ public class ActionList {
 	}
 	
 	public void execute(Screen s,String content) {
+		System.out.println("ActionList.execute(" + s + "," + content + ")");
 		for (int j=0;j<blocks.size();j++) {
 			cmds = blocks.get(j);
 			Boolean whenvalid = true;
 		//	System.out.println("WHEN="+cmds.get(0)[0]+"*");
-			if (cmds.get(0)[0].equals(".when")) {
-				whenvalid = whenCheck(s,cmds.get(0));
+			if (cmds != null && !cmds.isEmpty() && cmds.get(0)[0].equals(".when")) {
+				String[] cmd = cmds.get(0);
+				if(cmd.length > 0)
+					whenvalid = whenCheck(s,cmds.get(0));
 			} 
-			if (whenvalid) {
+			if (whenvalid && cmds != null) {
 				for (int i=0;i<cmds.size();i++) {
 					String[] cmd = cmds.get(i);
 					String action = cmd[0].toLowerCase();

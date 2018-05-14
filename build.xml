@@ -30,7 +30,7 @@
 	</target>
 
 	<target name="compile" depends="init">
-	  <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="on">
+	  <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="on" source="1.7" target="1.7">
 	    <classpath>
 	        <path refid="classpath"/>
 	    </classpath>
