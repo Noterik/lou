@@ -77,6 +77,7 @@
 				<exclude name="WEB-INF/lib/org.restlet.jar" />
 				<exclude name="WEB-INF/lib/com.noelios.restlet.jar"/>
 				<exclude name="WEB-INF/lib/com.noelios.restlet.ext.servlet_2.4.jar"/>
+				<exclude name="WEB-INF/lib/javax.servlet.jar"/>
 			</fileset>
 		</war>
 	</target>

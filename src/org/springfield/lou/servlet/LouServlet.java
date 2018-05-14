@@ -282,7 +282,7 @@ public class LouServlet extends HttpServlet {
 			//body+="<body ng-view>\n";
 			body+="<body>\n";
 
-			body+="<div id=\"screen\" />\n";
+			body+="<div id=\"screen\"></div>\n";
 			body+="</body>\n";
 			body+="</html>\n";
 			out.write(body.getBytes());
