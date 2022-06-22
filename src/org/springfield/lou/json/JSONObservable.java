@@ -2,6 +2,7 @@ package org.springfield.lou.json;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.json.simple.JSONObject;
 
@@ -42,6 +43,13 @@ public class JSONObservable extends JSONSerializable implements IJSONObservable 
 	@Override
 	public void addObserver(IJSONObserver observer) {
 		observers.add(observer);
+	}
+
+
+	@Override
+	public List<IJSONObserver> getObservers() {
+		// TODO Auto-generated method stub
+		return this.observers;
 	}
 
 }
